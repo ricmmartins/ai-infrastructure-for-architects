@@ -1,96 +1,94 @@
-# Capítulo 7 — Open Weights e AI Local
-## Quando self-host faz sentido e como desenhar arquiteturas híbridas
+# Chapter 7 — Open Weights and Local AI
+## When self-hosting makes sense and how to design hybrid architectures
 
-> “Open weights não são automaticamente mais baratos. Eles são mais controláveis. O custo depende de como você opera.”
-
----
-
-## O que são Open Weights
-
-Open weights são modelos cujos pesos são disponibilizados publicamente (Llama, Mistral, Gemma, Phi, etc.). Você pode baixá-los, rodá-los localmente ou na sua infraestrutura e, em muitos casos, fine-tuná-los.
-
-Para o arquiteto, a pergunta não é “open weights são melhores?”. A pergunta é:
-
-**Em quais cenários o controle adicional justifica a complexidade operacional?**
+> “Open weights are not automatically cheaper. They are more controllable. The cost depends on how you operate them.”
 
 ---
 
-## Quando Open Weights fazem sentido
+## What Open Weights are
 
-![Quando usar Open Weights](../assets/ch7-decision-open-weights.svg)
+Open weights are models whose weights are publicly available (Llama, Mistral, Gemma, Phi, etc.). You can download them, run them locally or on your infrastructure and, in many cases, fine-tune them.
 
-| Fator                        | Favorece Open Weights              | Favorece API Fechada          |
+For the architect, the question is not “are open weights better?”. The question is:
+
+**In which scenarios does the additional control justify the operational complexity?**
+
+---
+
+## When Open Weights make sense
+
+![When to use Open Weights](../assets/ch7-decision-open-weights.svg)
+
+| Factor                       | Favors Open Weights                | Favors Closed API             |
 |------------------------------|------------------------------------|-------------------------------|
-| Data residency / compliance  | Dados não podem sair             | Dados podem ir para a API     |
-| Volume muito alto            | Custo por token menor em escala    | Volume baixo ou médio         |
-| Necessidade de fine-tuning   | Você controla o modelo            | Fine-tuning limitado          |
-| Latência extremamente baixa   | Pode rodar mais perto do usuário   | Depende da região da API      |
-| Equipe e operação             | Tem capacidade de operar GPU       | Quer minimizar operação       |
-| Time-to-market               | Mais lento no início               | Muito mais rápido             |
+| Data residency / compliance  | Data cannot leave                  | Data can go to the API        |
+| Very high volume             | Lower cost per token at scale      | Low or medium volume          |
+| Need for fine-tuning         | You control the model              | Limited fine-tuning           |
+| Extremely low latency        | Can run closer to the user         | Depends on API region         |
+| Team and operations          | Has capacity to operate GPUs       | Wants to minimize operations  |
+| Time-to-market               | Slower at the start                | Much faster                   |
 
 ---
 
-## Arquitetura Híbrida
+## Hybrid Architecture
 
-A maioria das empresas maduras não escolhe um ou outro. Elas usam os dois.
+Most mature companies do not choose one or the other. They use both.
 
-![Arquitetura Híbrida: Closed + Open Weights](../assets/ch7-hybrid-architecture.svg)
+![Hybrid Architecture: Closed + Open Weights](../assets/ch7-hybrid-architecture.svg)
 
-**Padrão comum:**
-- Modelo fechado (Foundry / Azure OpenAI) para tarefas complexas ou de alta qualidade
-- Open weights self-hosted para tarefas de alto volume, dados sensíveis ou custo otimizado
-- Um router (ou política) decide qual caminho usar
+**Common pattern:**
+- Closed model (Foundry / Azure OpenAI) for complex or high-quality tasks
+- Self-hosted open weights for high-volume tasks, sensitive data or cost optimization
+- A router (or policy) decides which path to use
 
 ---
 
-## Engines e quantização
+## Engines and quantization
 
-| Engine       | Melhor para                  | Observação                          |
+| Engine       | Best for                     | Note                               |
 |--------------|------------------------------|------------------------------------|
-| vLLM         | Alto throughput              | PagedAttention, muito usado        |
-| SGLang       | Baixa latência + structured   | Bom para agents                    |
-| Ollama       | Desenvolvimento local        | Simples, não é para produção alta   |
-| llama.cpp    | CPU / edge                   | Quantização agressiva               |
+| vLLM         | High throughput              | PagedAttention, widely used        |
+| SGLang       | Low latency + structured     | Good for agents                    |
+| Ollama       | Local development            | Simple, not for high production    |
+| llama.cpp    | CPU / edge                   | Aggressive quantization            |
 
-**Quantização** reduz o tamanho do modelo e o consumo de HBM, permitindo rodar modelos maiores em menos GPUs — com algum trade-off de qualidade.
-
----
-
-## Decisões do arquiteto
-
-1. **Qual percentual do tráfego pode ir para open weights?**
-2. **Onde rodar?** (AKS + GPU, VMs, Foundry Model Catalog)
-3. **Como versionar e atualizar os modelos?**
-4. **Qual estratégia de fallback** se o modelo local falhar?
-5. **Como medir qualidade** comparada com o modelo fechado?
+**Quantization** reduces model size and HBM consumption, allowing larger models to run on fewer GPUs — with some quality trade-off.
 
 ---
 
-## Quando usar / quando não usar
+## Architect decisions
 
-| Situação                              | Recomendação                          |
+1. **What percentage of traffic can go to open weights?**
+2. **Where to run?** (AKS + GPU, VMs, Foundry Model Catalog)
+3. **How to version and update models?**
+4. **What fallback strategy** if the local model fails?
+5. **How to measure quality** compared to the closed model?
+
+---
+
+## When to use / when not to use
+
+| Situation                             | Recommendation                        |
 |--------------------------------------|---------------------------------------|
-| Dados altamente sensíveis             | Open weights                          |
-| Volume baixo, precisa entregar rápido | API fechada                           |
-| Alto volume + dados mistos           | Arquitetura híbrida                   |
-| Necessidade de fine-tuning frequente | Open weights                          |
-| Equipe pequena sem experiência em GPU | Comece com API, evolua depois         |
+| Highly sensitive data                | Open weights                          |
+| Low volume, need to deliver fast     | Closed API                            |
+| High volume + mixed data             | Hybrid architecture                   |
+| Frequent fine-tuning need            | Open weights                          |
+| Small team without GPU experience    | Start with API, evolve later          |
 
 ---
 
-## Checklist do capítulo
+## Chapter checklist
 
-- [ ] Consigo explicar quando open weights são uma decisão de arquitetura e não só de custo?
-- [ ] Entendo o padrão de arquitetura híbrida?
-- [ ] Sei os principais engines e quando usar cada um?
-- [ ] Tenho um framework para decidir entre API e self-hosted?
-- [ ] Consigo mapear isso para Azure (Foundry + AKS/ND-series)?
+- [ ] Can I explain when open weights are an architecture decision and not just a cost decision?
+- [ ] Do I understand the hybrid architecture pattern?
+- [ ] Do I know the main engines and when to use each one?
+- [ ] Do I have a framework to decide between API and self-hosted?
+- [ ] Can I map this to Azure (Foundry + AKS/ND-series)?
 
 ---
 
-## O que vem a seguir
+## What comes next
 
-Com o Capítulo 7 fechamos a **Part II — Core Patterns**.  
-No Capítulo 8 entramos na **Part III — Azure Architecture Patterns**, começando por **Microsoft Foundry e padrões de agentes**.
-
-Quer ajustes neste capítulo ou seguimos para o Capítulo 8?
+With Chapter 7 we close **Part II — Core Patterns**.  
+In Chapter 8 we enter **Part III — Azure Architecture Patterns**, starting with **Microsoft Foundry and agent patterns**.
