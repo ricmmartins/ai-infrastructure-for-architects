@@ -2,6 +2,8 @@
 
 Handbook de System Design e Infraestrutura de AI para Arquitetos.
 
+**Available in English:** [Read in English](https://github.com/ricmmartins/ai-infrastructure-for-architects/tree/en-us)
+
 Material prático para arquitetos (Cloud, Solution, Enterprise) que precisam entender como sistemas de AI realmente funcionam e tomar decisões conscientes, sem precisar virar desenvolvedores.
 
 Projeto irmão do [AI for Infra Pros](https://www.ai4infra.com/).
