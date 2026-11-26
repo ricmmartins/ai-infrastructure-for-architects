@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Três Modos Fundamentais de AI</title>
+  <desc>Training, Inference e Agents como três padrões de sistema distintos com diferentes requisitos de infraestrutura.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <rect x="20" y="30" width="180" height="200" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="110" y="70" text-anchor="middle" font-weight="bold" font-size="14" fill="#1a3a5c">Training</text>
+  <text x="110" y="100" text-anchor="middle" font-size="11" fill="#333">Batch jobs</text>
+  <text x="110" y="120" text-anchor="middle" font-size="11" fill="#333">Multi-GPU / multi-node</text>
+  <text x="110" y="140" text-anchor="middle" font-size="11" fill="#333">Horas a semanas</text>
+  <text x="110" y="160" text-anchor="middle" font-size="11" fill="#333">Checkpointing</text>
+  <text x="110" y="185" text-anchor="middle" font-size="11" fill="#555">Custo: GPU-hours</text>
+
+  <rect x="230" y="30" width="180" height="200" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="320" y="70" text-anchor="middle" font-weight="bold" font-size="14" fill="#2d5a1b">Inference</text>
+  <text x="320" y="100" text-anchor="middle" font-size="11" fill="#333">Online / streaming</text>
+  <text x="320" y="120" text-anchor="middle" font-size="11" fill="#333">Latência crítica</text>
+  <text x="320" y="140" text-anchor="middle" font-size="11" fill="#333">Scale-out</text>
+  <text x="320" y="160" text-anchor="middle" font-size="11" fill="#333">KV cache</text>
+  <text x="320" y="185" text-anchor="middle" font-size="11" fill="#555">Custo: tokens</text>
+
+  <rect x="440" y="30" width="180" height="200" rx="10" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="530" y="70" text-anchor="middle" font-weight="bold" font-size="14" fill="#5a3d6a">Agents</text>
+  <text x="530" y="100" text-anchor="middle" font-size="11" fill="#333">Loops multi-step</text>
+  <text x="530" y="120" text-anchor="middle" font-size="11" fill="#333">Tools + memória</text>
+  <text x="530" y="140" text-anchor="middle" font-size="11" fill="#333">Estado e orquestração</text>
+  <text x="530" y="160" text-anchor="middle" font-size="11" fill="#333">Amplifica custo</text>
+  <text x="530" y="185" text-anchor="middle" font-size="11" fill="#555">Custo: tokens × steps</text>
+
+  <text x="320" y="260" text-anchor="middle" font-size="12" fill="#666" font-style="italic">Três padrões de sistema. Três conjuntos de decisões arquiteturais.</text>
+</svg>
