@@ -1,99 +1,99 @@
-# Capítulo 1 — Por que AI é diferente
-## Mental Models para Arquitetos
+# Chapter 1 — Why AI is Different
+## Mental Models for Architects
 
-O melhor sistema de AI que eu já vi não foi desenhado por um cientista de dados. Foi desenhado por um arquiteto que entendeu que AI não é uma aplicação comum.
+The best AI system I have ever seen was not designed by a data scientist. It was designed by an architect who understood that AI is not a regular application.
 
-Este handbook é o projeto irmão do [AI for Infra Pros](https://www.ai4infra.com/). Enquanto aquele material foca em operação, deployment e troubleshooting, este foca em decisões de arquitetura.
-
----
-
-## A reunião que muda o jogo
-
-Você está numa call com um cliente digital native avançado. Eles falam de continuous batching, PagedAttention, disaggregated serving, agent loops e open weights como se fossem termos do dia a dia. Do outro lado da mesa, o time de infraestrutura tradicional ainda pensa em “subir uma API e colocar um load balancer na frente”.
-
-Essa desconexão não é falta de conhecimento técnico. É falta de mental model.
-
-Este capítulo constrói o modelo mental que um arquiteto precisa para conversar no mesmo nível desses clientes, sem precisar virar desenvolvedor de ML.
+This handbook is the sibling project of [AI for Infra Pros](https://www.ai4infra.com/). While that material focuses on operations, deployment and troubleshooting, this one focuses on architecture decisions.
 
 ---
 
-## O que muda quando o sistema é AI
+## The meeting that changes the game
 
-![Mental Model: Aplicação Tradicional vs Workload de AI](../assets/ch1-mental-model.svg)
+You are on a call with an advanced digital-native client. They talk about continuous batching, PagedAttention, disaggregated serving, agent loops and open weights as if they were everyday terms. On the other side of the table, the traditional infrastructure team still thinks in terms of “spin up an API and put a load balancer in front of it.”
 
-Em uma aplicação tradicional, o arquiteto desenha um fluxo relativamente previsível: request chega, lógica de negócio processa, resposta sai. O estado fica no banco de dados. O compute é CPU. A rede é Ethernet padrão. O custo é relativamente linear com a carga.
+That disconnect is not a lack of technical knowledge. It is a lack of mental model.
 
-Em AI, três coisas quebram esse modelo:
-
-1. O “código” não é determinístico da mesma forma. O modelo é um artefato estático (pesos) que produz saídas probabilísticas.
-2. O compute dominante deixa de ser CPU. Passa a ser GPU com memória especializada (HBM), interconexão de alta banda (NVLink, InfiniBand) e padrões de comunicação coletivos (all-reduce).
-3. Existem três modos de operação fundamentalmente diferentes, e cada um exige uma arquitetura distinta.
+This chapter builds the mental model an architect needs to talk at the same level as those clients without becoming an ML developer.
 
 ---
 
-## Os três modos fundamentais
+## What changes when the system is AI
 
-![Três Modos Fundamentais de AI](../assets/ch1-three-modes.svg)
+![Mental Model: Traditional Application vs AI Workload](../assets/ch1-mental-model.svg)
 
-| Modo       | Natureza                  | Duração          | Estado                  | Gargalo principal     | Modelo de custo      |
+In a traditional application, the architect designs a relatively predictable flow: request arrives, business logic processes it, response goes out. State lives in the database. Compute is CPU. Network is standard Ethernet. Cost is relatively linear with load.
+
+In AI, three things break that model:
+
+1. The “code” is not deterministic in the same way. The model is a static artifact (weights) that produces probabilistic outputs.
+2. The dominant compute is no longer CPU. It becomes GPU with specialized memory (HBM), high-bandwidth interconnect (NVLink, InfiniBand) and collective communication patterns (all-reduce).
+3. There are three fundamentally different modes of operation, and each one requires a distinct architecture.
+
+---
+
+## The three fundamental modes
+
+![Three Fundamental Modes of AI](../assets/ch1-three-modes.svg)
+
+| Mode       | Nature                    | Duration         | State                   | Main bottleneck       | Cost model           |
 |------------|---------------------------|------------------|-------------------------|-----------------------|----------------------|
-| Training   | Batch, offline            | Horas a semanas  | Checkpoints + gradients | Comunicação multi-GPU  | GPU-hours            |
-| Inference  | Online, interativo        | Milissegundos    | KV cache (temporário)    | Latência + throughput   | Tokens               |
-| Agents     | Loops multi-step          | Segundos a min.  | Memória + tools + estado | Amplificação de tokens   | Tokens × steps       |
+| Training   | Batch, offline            | Hours to weeks   | Checkpoints + gradients | Multi-GPU communication | GPU-hours            |
+| Inference  | Online, interactive       | Milliseconds     | KV cache (temporary)    | Latency + throughput  | Tokens               |
+| Agents     | Multi-step loops          | Seconds to min.  | Memory + tools + state  | Token amplification   | Tokens × steps        |
 
-Regra de ouro: nunca desenhe uma arquitetura “genérica de AI”. Pergunte primeiro qual modo estamos otimizando.
-
----
-
-## Por que isso importa para o arquiteto
-
-O arquiteto não precisa saber escrever o loop de treinamento ou o kernel de attention. Ele precisa saber:
-
-- Quando um requisito de latência de 200 ms torna disaggregated serving necessário.
-- Por que um agente com 5 steps pode custar 10–20× mais que uma chamada simples de inference.
-- Por que open weights self-hosted só fazem sentido acima de um certo volume ou sob restrição de data residency.
-- Como mapear esses requisitos para decisões de Azure (Foundry, ND-series, AKS + vLLM, private endpoints).
-
-Essas são decisões de system design. Elas definem o shape da arquitetura muito antes de qualquer código ser escrito.
-
-Para a parte operacional (como operar o cluster, troubleshooting de GPU, IaC), veja o [AI for Infra Pros](https://www.ai4infra.com/).
+Golden rule: never design a “generic AI” architecture. First ask which mode we are optimizing for.
 
 ---
 
-## Mental models essenciais
+## Why this matters for the architect
 
-| Conceito AI          | Equivalente arquitetural          | Por que o mapeamento ajuda                  |
+The architect does not need to know how to write the training loop or the attention kernel. He needs to know:
+
+- When a 200 ms latency requirement makes disaggregated serving necessary.
+- Why an agent with 5 steps can cost 10–20× more than a simple inference call.
+- Why self-hosted open weights only make sense above a certain volume or under data residency constraints.
+- How to map those requirements to Azure decisions (Foundry, ND-series, AKS + vLLM, private endpoints).
+
+These are system design decisions. They define the shape of the architecture long before any code is written.
+
+For the operational side (how to operate the cluster, GPU troubleshooting, IaC), see [AI for Infra Pros](https://www.ai4infra.com/).
+
+---
+
+## Essential mental models
+
+| AI Concept           | Architectural equivalent          | Why the mapping helps                       |
 |----------------------|-----------------------------------|---------------------------------------------|
-| Modelo (pesos)       | Artefato versionado               | Tem lifecycle, storage, e pode ser substituído |
-| Training             | Job de batch em larga escala      | Tolerante a falha, precisa de checkpointing |
-| Inference            | API de alta performance           | SLA de latência, scale-out, observabilidade  |
-| KV cache             | Cache de sessão especializado    | Consome memória, afeta throughput           |
-| Agent loop           | Workflow com estado e side-effects| Amplifica custo e risco de falha            |
-| Open weights         | Binário que você controla        | Permite self-host, fine-tune e quantização   |
-| RAG                  | Retrieval + geração              | Adiciona uma camada de dados ao caminho crítico |
+| Model (weights)      | Versioned artifact               | Has lifecycle, storage, and can be replaced |
+| Training             | Large-scale batch job             | Fault-tolerant, needs checkpointing         |
+| Inference            | High-performance API              | Latency SLA, scale-out, observability       |
+| KV cache             | Specialized session cache         | Consumes memory, affects throughput         |
+| Agent loop           | Workflow with state and side-effects | Amplifies cost and failure risk          |
+| Open weights         | Binary you control                | Enables self-host, fine-tune and quantization |
+| RAG                  | Retrieval + generation            | Adds a data layer to the critical path      |
 
 ---
 
-## Quando usar / quando não usar
+## When to use / when not to use
 
-| Situação                              | Abordagem recomendada              | Por quê                                      |
+| Situation                             | Recommended approach               | Why                                           |
 |--------------------------------------|------------------------------------|-----------------------------------------------|
-| Volume baixo, tarefa genérica         | API fechada (Foundry / Azure OpenAI) | Menor overhead operacional                    |
-| Dados não podem sair do perímetro    | Open weights self-hosted           | Data residency / compliance                   |
-| Latência extremamente baixa          | Inference otimizada (disaggregated)| Prefill e decode têm requisitos diferentes    |
-| Processo multi-step com tools        | Agent com orquestração controlada | Mas meça a amplificação de custo               |
-| Treinamento de modelo grande         | Cluster multi-node + InfiniBand    | Comunicação é o gargalo                      |
+| Low volume, generic task              | Closed API (Foundry / Azure OpenAI) | Lower operational overhead                    |
+| Data cannot leave the perimeter      | Self-hosted open weights           | Data residency / compliance                   |
+| Extremely low latency                | Optimized inference (disaggregated)| Prefill and decode have different requirements |
+| Multi-step process with tools        | Agent with controlled orchestration | But measure the cost amplification           |
+| Training a large model               | Multi-node cluster + InfiniBand    | Communication is the bottleneck               |
 
 ---
 
 ## Checklist
 
-- [ ] Quais são os três modos fundamentais de AI e como eles diferem em estado, duração e custo?
-- [ ] Por que uma arquitetura de inference não serve para training (e vice-versa)?
-- [ ] O que é amplificação de custo em sistemas agentic?
-- [ ] Quando open weights deixam de ser “mais baratos” e passam a ser uma decisão de arquitetura?
-- [ ] Como você explicaria a diferença entre um sistema tradicional e um workload de AI para um stakeholder não técnico?
+- [ ] What are the three fundamental modes of AI and how do they differ in state, duration and cost?
+- [ ] Why does an inference architecture not serve training (and vice-versa)?
+- [ ] What is cost amplification in agentic systems?
+- [ ] When do open weights stop being “cheaper” and become an architecture decision?
+- [ ] How would you explain the difference between a traditional system and an AI workload to a non-technical stakeholder?
 
 ---
 
-Próximo: Training vs Inference vs Agents. Os trade-offs de sistema que mudam a decisão de arquitetura.
+Next: Training vs Inference vs Agents. The system trade-offs that change the architecture decision.
