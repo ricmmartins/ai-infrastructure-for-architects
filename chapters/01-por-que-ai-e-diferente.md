@@ -1,17 +1,19 @@
 # Capítulo 1 — Por que AI é diferente
 ## Mental Models para Arquitetos
 
-> “O melhor sistema de AI que eu já vi não foi desenhado por um cientista de dados. Foi desenhado por um arquiteto que entendeu que AI não é uma aplicação comum.”
+O melhor sistema de AI que eu já vi não foi desenhado por um cientista de dados. Foi desenhado por um arquiteto que entendeu que AI não é uma aplicação comum.
+
+Este handbook é o projeto irmão do [AI for Infra Pros](https://www.ai4infra.com/). Enquanto aquele material foca em operação, deployment e troubleshooting, este foca em decisões de arquitetura.
 
 ---
 
 ## A reunião que muda o jogo
 
-Você está numa call com um cliente digital native. Eles falam de continuous batching, PagedAttention, disaggregated serving, agent loops e open weights como se fossem termos do dia a dia. Do outro lado da mesa, o time de infraestrutura tradicional ainda pensa em “subir uma API e colocar um load balancer na frente”.
+Você está numa call com um cliente digital native avançado. Eles falam de continuous batching, PagedAttention, disaggregated serving, agent loops e open weights como se fossem termos do dia a dia. Do outro lado da mesa, o time de infraestrutura tradicional ainda pensa em “subir uma API e colocar um load balancer na frente”.
 
-Essa desconexão não é falta de conhecimento técnico. É falta de **mental model**.
+Essa desconexão não é falta de conhecimento técnico. É falta de mental model.
 
-Este capítulo constrói o modelo mental que um arquiteto precisa para conversar no mesmo nível desses clientes — sem precisar virar desenvolvedor de ML.
+Este capítulo constrói o modelo mental que um arquiteto precisa para conversar no mesmo nível desses clientes, sem precisar virar desenvolvedor de ML.
 
 ---
 
@@ -23,9 +25,9 @@ Em uma aplicação tradicional, o arquiteto desenha um fluxo relativamente previ
 
 Em AI, três coisas quebram esse modelo:
 
-1. **O “código” não é determinístico da mesma forma.** O modelo é um artefato estático (pesos) que produz saídas probabilísticas.
-2. **O compute dominante deixa de ser CPU.** Passa a ser GPU com memória especializada (HBM), interconexão de alta banda (NVLink, InfiniBand) e padrões de comunicação coletivos (all-reduce).
-3. **Existem três modos de operação fundamentalmente diferentes** — e cada um exige uma arquitetura distinta.
+1. O “código” não é determinístico da mesma forma. O modelo é um artefato estático (pesos) que produz saídas probabilísticas.
+2. O compute dominante deixa de ser CPU. Passa a ser GPU com memória especializada (HBM), interconexão de alta banda (NVLink, InfiniBand) e padrões de comunicação coletivos (all-reduce).
+3. Existem três modos de operação fundamentalmente diferentes, e cada um exige uma arquitetura distinta.
 
 ---
 
@@ -35,11 +37,11 @@ Em AI, três coisas quebram esse modelo:
 
 | Modo       | Natureza                  | Duração          | Estado                  | Gargalo principal     | Modelo de custo      |
 |------------|---------------------------|------------------|-------------------------|-----------------------|----------------------|
-| **Training**   | Batch, offline            | Horas a semanas  | Checkpoints + gradients | Comunicação multi-GPU  | GPU-hours            |
-| **Inference**  | Online, interativo        | Milissegundos    | KV cache (temporário)    | Latência + throughput   | Tokens               |
-| **Agents**     | Loops multi-step          | Segundos a min.  | Memória + tools + estado | Amplificação de tokens   | Tokens × steps       |
+| Training   | Batch, offline            | Horas a semanas  | Checkpoints + gradients | Comunicação multi-GPU  | GPU-hours            |
+| Inference  | Online, interativo        | Milissegundos    | KV cache (temporário)    | Latência + throughput   | Tokens               |
+| Agents     | Loops multi-step          | Segundos a min.  | Memória + tools + estado | Amplificação de tokens   | Tokens × steps       |
 
-**Regra de ouro para arquitetos:** Nunca desenhe uma arquitetura “genérica de AI”. Sempre pergunte primeiro: *qual modo estamos otimizando?*
+Regra de ouro: nunca desenhe uma arquitetura “genérica de AI”. Pergunte primeiro qual modo estamos otimizando.
 
 ---
 
@@ -47,12 +49,14 @@ Em AI, três coisas quebram esse modelo:
 
 O arquiteto não precisa saber escrever o loop de treinamento ou o kernel de attention. Ele precisa saber:
 
-- Quando um requisito de latência de 200ms torna disaggregated serving necessário.
+- Quando um requisito de latência de 200 ms torna disaggregated serving necessário.
 - Por que um agente com 5 steps pode custar 10–20× mais que uma chamada simples de inference.
 - Por que open weights self-hosted só fazem sentido acima de um certo volume ou sob restrição de data residency.
-- Como mapear esses requisitos para decisões de Azure (Foundry, ND-series, AKS + vLLM, private endpoints, etc.).
+- Como mapear esses requisitos para decisões de Azure (Foundry, ND-series, AKS + vLLM, private endpoints).
 
 Essas são decisões de system design. Elas definem o shape da arquitetura muito antes de qualquer código ser escrito.
+
+Para a parte operacional (como operar o cluster, troubleshooting de GPU, IaC), veja o [AI for Infra Pros](https://www.ai4infra.com/).
 
 ---
 
@@ -82,9 +86,7 @@ Essas são decisões de system design. Elas definem o shape da arquitetura muito
 
 ---
 
-## Checklist do capítulo
-
-Antes de seguir, confirme que você consegue responder:
+## Checklist
 
 - [ ] Quais são os três modos fundamentais de AI e como eles diferem em estado, duração e custo?
 - [ ] Por que uma arquitetura de inference não serve para training (e vice-versa)?
@@ -94,8 +96,4 @@ Antes de seguir, confirme que você consegue responder:
 
 ---
 
-## O que vem a seguir
-
-No Capítulo 2 vamos aprofundar exatamente as diferenças de system design entre **Training, Inference e Agents**. Vamos olhar para os trade-offs reais de compute, networking, estado e custo — com diagramas e frameworks de decisão que você pode usar em conversas com clientes.
-
-Quer que eu ajuste alguma coisa neste capítulo (profundidade, tom, diagramas, exemplos) antes de seguir para o Capítulo 2?
+Próximo: Training vs Inference vs Agents. Os trade-offs de sistema que mudam a decisão de arquitetura.
