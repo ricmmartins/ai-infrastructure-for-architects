@@ -1,87 +1,66 @@
-# Capítulo 12 — Cost, FinOps e Observabilidade para Arquitetos
-## Como tomar decisões conscientes sobre custo em sistemas de AI
+# Capítulo 12 — Cost, FinOps e Observabilidade
 
-> “Em AI, o custo não é uma consequência. É uma variável de design.”
-
----
-
-## Por que o arquiteto precisa se importar com custo
-
-Diferente de muitas aplicações tradicionais, o custo em AI pode variar ordens de magnitude dependendo de decisões arquiteturais:
-
-- Escolha do modelo
-- Tamanho do contexto
-- Número de steps de um agent
-- Utilization de GPU
-- Estratégia de retrieval
-
-O arquiteto que ignora isso entrega sistemas que funcionam, mas que ninguém consegue pagar em escala.
+Em AI o custo não é consequência. É variável de design. Decisões de modelo, contexto, steps e utilization mudam o custo em ordens de magnitude.
 
 ---
 
-## Principais drivers de custo
+## Drivers principais
 
 ![Principais Drivers de Custo em AI](../assets/ch12-cost-drivers.svg)
 
 | Driver              | O que influencia                          | Alavanca do arquiteto                  |
 |---------------------|-------------------------------------------|----------------------------------------|
-| **Compute (GPU)**       | Utilization, tipo de GPU, tempo de uso    | Batching, quantização, right-sizing    |
-| **Tokens**              | Tamanho de input/output, steps de agent   | Limitar contexto e steps               |
-| **Dados & Storage**     | Volume de training data, vector DB        | Lifecycle, compressão, retenção        |
-| **Rede**                | Egress, transferência de dados             | Co-localização, Private Link            |
+| Compute (GPU)       | Utilization, tipo de GPU, tempo de uso    | Batching, quantização, right-sizing    |
+| Tokens              | Tamanho de input/output, steps de agent   | Limitar contexto e steps               |
+| Dados & Storage     | Volume de training data, vector DB        | Lifecycle, retenção                    |
+| Rede                | Egress, transferência de dados             | Co-localização, Private Link            |
 
 ---
 
-## Modelos de custo por modo
+## Modelo de custo por modo
 
-| Modo          | Unidade principal de custo     | Como o arquiteto controla               |
-|---------------|--------------------------------|-----------------------------------------|
-| **Training**      | GPU-hours                      | Duração do job, eficiência de paralelismo |
-| **Inference**     | Custo por milhão de tokens      | Modelo, quantização, batching           |
-| **Agents**        | Tokens × steps                  | Limite de steps, escolha de tools       |
-| **RAG**           | Retrieval + tokens             | Qualidade do índice, reranking         |
+| Modo          | Unidade principal de custo     | Como controlar                           |
+|---------------|--------------------------------|------------------------------------------|
+| Training      | GPU-hours                      | Duração do job, eficiência de paralelismo |
+| Inference     | Custo por milhão de tokens      | Modelo, quantização, batching           |
+| Agents        | Tokens × steps                  | Limite de steps, escolha de tools       |
+| RAG           | Retrieval + tokens             | Qualidade do índice, reranking         |
 
 ---
 
-## Observabilidade além da infraestrutura
+## Observabilidade
 
 ![Camadas de Observabilidade para AI](../assets/ch12-observability-layers.svg)
 
-O arquiteto precisa garantir visibilidade em três níveis:
+Três níveis:
 
-1. **Infraestrutura** — GPU utilization, latência, erros
-2. **Modelo** — tokens por request, TTFT, qualidade
-3. **Agent / Aplicação** — número de steps, tool calls, custo por execução
+1. Infraestrutura — GPU utilization, latência, erros.
+2. Modelo — tokens por request, TTFT, qualidade.
+3. Agent / Aplicação — número de steps, tool calls, custo por execução.
 
-Sem o terceiro nível, é impossível entender por que o custo de um agent explodiu.
+Sem o terceiro nível você não sabe por que o custo de um agent explodiu.
 
 ---
 
-## Práticas de FinOps para AI
+## Práticas de FinOps
 
-| Prática                          | Benefício                              |
-|----------------------------------|---------------------------------------|
-| Tagging consistente              | Visibilidade por time / produto       |
-| Orçamentos e alertas              | Evita surpresas                       |
-| Right-sizing de GPU              | Reduz desperdício                      |
-| Limites de steps em agents       | Controla amplificação de custo        |
-| Avaliação periódica de modelos    | Troca para modelos mais baratos quando possível |
+Tagging consistente dá visibilidade por time ou produto. Orçamentos e alertas evitam surpresa. Right-sizing de GPU reduz desperdício. Limite de steps em agents controla amplificação. Avaliação periódica de modelos permite trocar para opção mais barata quando a qualidade aceita.
 
 ---
 
 ## Quando usar / quando não usar
 
-| Situação                              | Abordagem                             |
-|--------------------------------------|---------------------------------------|
-| Alto volume de inference             | Otimizar utilization e quantização     |
-| Agents em produção                    | Limites rígidos de steps + observabilidade |
-| Training frequente                   | Monitorar GPU-hours de perto          |
-| Projeto piloto                       | Aceitar custo maior no início          |
-| Necessidade de previsibilidade       | Modelos gerenciados + limites         |
+| Situação                              | Abordagem                             | O que quebra se não fizer               |
+|--------------------------------------|---------------------------------------|---------------------------------------|
+| Alto volume de inference             | Otimizar utilization e quantização     | Paga GPU ociosa ou modelo maior que o necessário |
+| Agents em produção                    | Limites rígidos de steps + observabilidade | Custo por execução sem teto            |
+| Training frequente                   | Monitorar GPU-hours de perto          | Jobs longos sem visibilidade          |
+| Projeto piloto                       | Aceitar custo maior no início          | Otimizar cedo demais atrasa entrega   |
+| Necessidade de previsibilidade       | Modelos gerenciados + limites         | Self-managed sem capacidade: surpresa |
 
 ---
 
-## Checklist do capítulo
+## Checklist
 
 - [ ] Consigo identificar os principais drivers de custo de um sistema de AI?
 - [ ] Sei a diferença de modelo de custo entre training, inference e agents?
@@ -91,8 +70,4 @@ Sem o terceiro nível, é impossível entender por que o custo de um agent explo
 
 ---
 
-## O que vem a seguir
-
-No Capítulo 13 vamos falar de **Security, Privacy e Compliance em AI**. Como o arquiteto trata dados sensíveis, isolamento e riscos específicos de sistemas agentic.
-
-Quer ajustes neste capítulo ou seguimos para o Capítulo 13?
+Próximo: Security, Privacy e Compliance. Onde dados sensíveis e agents com side-effects mudam o design.
