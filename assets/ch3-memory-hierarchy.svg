@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Hierarquia de Memória em GPU para AI</title>
+  <desc>Visualização da hierarquia de memória relevante para arquitetos de AI: HBM, L2, registers e o impacto no design.</desc>
+
+  <text x="320" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Hierarquia de Memória (visão do arquiteto)</text>
+
+  <!-- HBM -->
+  <rect x="40" y="60" width="560" height="50" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="320" y="90" text-anchor="middle" font-weight="bold" font-size="14" fill="#1a3a5c">HBM (High Bandwidth Memory) — 80–192 GB por GPU</text>
+
+  <!-- L2 -->
+  <rect x="80" y="130" width="480" height="45" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="320" y="158" text-anchor="middle" font-weight="bold" font-size="13" fill="#2d5a1b">L2 Cache — dezenas de MB, muito mais rápida</text>
+
+  <!-- Registers / Shared -->
+  <rect x="140" y="195" width="360" height="40" rx="6" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"/>
+  <text x="320" y="220" text-anchor="middle" font-size="12" fill="#7a5900">Registers + Shared Memory (dentro do SM)</text>
+
+  <!-- Labels -->
+  <text x="320" y="270" text-anchor="middle" font-size="12" fill="#333">Quanto mais perto do compute, mais rápido e menor.</text>
+  <text x="320" y="290" text-anchor="middle" font-size="12" fill="#333">KV cache vive principalmente em HBM. Isso define limites de batch e contexto.</text>
+</svg>
