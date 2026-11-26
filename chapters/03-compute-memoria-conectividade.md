@@ -1,109 +1,107 @@
-# Capítulo 3 — Compute, Memória e Conectividade
-## HBM, NVLink, InfiniBand e as decisões de escala
+# Chapter 3 — Compute, Memory and Connectivity
+## HBM, NVLink, InfiniBand and scale decisions
 
-> “O modelo cabe na HBM? Essa é a primeira pergunta que um arquiteto de AI precisa responder.”
-
----
-
-## Por que este capítulo existe
-
-Nos capítulos anteriores estabelecemos os três modos e seus trade-offs de sistema. Agora descemos para o nível de hardware e interconexão — o lugar onde as decisões de arquitetura se tornam concretas.
-
-O arquiteto não precisa saber o detalhe do kernel de attention. Ele precisa entender:
-
-- Por que HBM é o recurso mais escasso
-- Quando scale-up (NVLink) é suficiente e quando precisa de scale-out (InfiniBand)
-- Como essas escolhas afetam custo, latência e resiliência
+> “Does the model fit in HBM? That is the first question an AI architect needs to answer.”
 
 ---
 
-## A hierarquia de memória que importa
+## Why this chapter exists
 
-![Hierarquia de Memória em GPU para AI](../assets/ch3-memory-hierarchy.svg)
+In previous chapters we established the three modes and their system trade-offs. Now we go down to the hardware and interconnect level — the place where architecture decisions become concrete.
 
-Para o arquiteto, a memória em AI se resume a uma regra simples:
+The architect does not need to know the detail of the attention kernel. He needs to understand:
 
-**O que não cabe na HBM não existe para o modelo durante a inference.**
+- Why HBM is the scarcest resource
+- When scale-up (NVLink) is enough and when scale-out (InfiniBand) is required
+- How those choices affect cost, latency and resilience
 
-| Camada          | Capacidade típica     | Velocidade     | O que vive aqui                     |
-|-----------------|---------------------|----------------|-------------------------------------|
-| Registers/SM    | Muito pequena       | Extremamente alta | Dados temporários de computação   |
-| L2 Cache        | Dezenas de MB       | Muito alta     | Reuso de dados                      |
-| **HBM**         | 80–192 GB por GPU    | Alta           | Pesos + KV cache + ativações      |
-| Host Memory     | TBs                 | Baixa          | Offloading (raramente usado)        |
+---
 
-**Impacto prático:**
-- KV cache consome HBM linearmente com o tamanho do contexto e o batch.
-- Isso limita quantos usuários simultâneos um GPU consegue atender.
-- É o motivo pelo qual técnicas como PagedAttention e quantização existem.
+## The memory hierarchy that matters
+
+![GPU Memory Hierarchy for AI](../assets/ch3-memory-hierarchy.svg)
+
+For the architect, memory in AI comes down to a simple rule:
+
+**What does not fit in HBM does not exist for the model during inference.**
+
+| Layer           | Typical capacity      | Speed          | What lives here                     |
+|-----------------|-----------------------|----------------|-------------------------------------|
+| Registers/SM    | Very small            | Extremely high | Temporary computation data          |
+| L2 Cache        | Tens of MB            | Very high      | Data reuse                          |
+| **HBM**         | 80–192 GB per GPU    | High           | Weights + KV cache + activations    |
+| Host Memory     | TBs                   | Low            | Offloading (rarely used)            |
+
+**Practical impact:**
+- KV cache consumes HBM linearly with context size and batch.
+- This limits how many simultaneous users one GPU can serve.
+- It is the reason techniques like PagedAttention and quantization exist.
 
 ---
 
 ## Scale-up vs Scale-out
 
-![Scale-up vs Scale-out em AI](../assets/ch3-scale-up-vs-scale-out.svg)
+![Scale-up vs Scale-out in AI](../assets/ch3-scale-up-vs-scale-out.svg)
 
-| Aspecto              | Scale-up (NVLink)                  | Scale-out (InfiniBand / Ethernet)     |
+| Aspect               | Scale-up (NVLink)                  | Scale-out (InfiniBand / Ethernet)     |
 |----------------------|------------------------------------|---------------------------------------|
-| **Onde acontece**    | Dentro do nó (8 GPUs)             | Entre nós                              |
-| **Banda**            | Extremamente alta (900 GB/s+)      | Alta, mas menor (400–800 Gb/s)        |
-| **Latência**         | Muito baixa                        | Mais alta                             |
-| **Melhor para**      | Tensor Parallel, grandes modelos   | Data Parallel, clusters grandes       |
-| **Limite**           | Número de GPUs no nó               | Quase ilimitado                       |
-| **Custo relativo**   | Incluso no nó                     | Infraestrutura de rede dedicada       |
+| **Where it happens** | Inside the node (8 GPUs)          | Between nodes                         |
+| **Bandwidth**        | Extremely high (900 GB/s+)        | High, but lower (400–800 Gb/s)      |
+| **Latency**          | Very low                          | Higher                                |
+| **Best for**         | Tensor Parallel, large models     | Data Parallel, large clusters         |
+| **Limit**            | Number of GPUs in the node        | Almost unlimited                      |
+| **Relative cost**    | Included in the node              | Dedicated network infrastructure      |
 
-**Regra de ouro:**
-- Modelos que cabem em 1–8 GPUs → priorize scale-up (NVLink).
-- Modelos maiores ou training em escala → scale-out com InfiniBand.
+**Golden rule:**
+- Models that fit in 1–8 GPUs → prioritize scale-up (NVLink).
+- Larger models or training at scale → scale-out with InfiniBand.
 
 ---
 
-## Decisões de arquiteto
+## Architect decisions
 
-### 1. O modelo cabe em quantos GPUs?
-- Se cabe em 1 GPU (com quantização) → inference simples, menor complexidade.
-- Se precisa de tensor parallel → exige NVLink ou equivalente.
-- Se precisa de pipeline + data parallel → exige InfiniBand.
+### 1. How many GPUs does the model fit in?
+- If it fits in 1 GPU (with quantization) → simple inference, lower complexity.
+- If it needs tensor parallel → requires NVLink or equivalent.
+- If it needs pipeline + data parallel → requires InfiniBand.
 
-### 2. Qual interconexão eu preciso?
-| Cenário                          | Interconexão recomendada     |
+### 2. What interconnect do I need?
+| Scenario                         | Recommended interconnect     |
 |----------------------------------|----------------------------|
-| Inference de modelo médio        | NVLink no nó                |
-| Training de modelo grande        | InfiniBand                 |
-| Cluster de inference em escala   | Ethernet de alta performance ou InfiniBand |
-| Multi-agent com tools            | Rede normal (o gargalo não é a GPU) |
+| Medium model inference           | NVLink inside the node      |
+| Large model training             | InfiniBand                 |
+| Scaled inference cluster         | High-performance Ethernet or InfiniBand |
+| Multi-agent with tools           | Normal network (the bottleneck is not the GPU) |
 
-### 3. Impacto em Azure
-- **ND-series** (H100/H200/B200) já vêm com NVLink e opções de InfiniBand.
-- A escolha do SKU define o teto de scale-up.
-- Para scale-out, a decisão é se você usa AKS, CycleCloud/Slurm ou Foundry gerenciado.
+### 3. Impact on Azure
+- **ND-series** (H100/H200/B200) already come with NVLink and InfiniBand options.
+- The SKU choice defines the scale-up ceiling.
+- For scale-out, the decision is whether you use AKS, CycleCloud/Slurm or managed Foundry.
 
 ---
 
-## Quando usar / quando não usar
+## When to use / when not to use
 
-| Situação                              | Recomendação                          | Motivo                                      |
+| Situation                             | Recommendation                        | Reason                                      |
 |--------------------------------------|---------------------------------------|---------------------------------------------|
-| Modelo cabe em 1 GPU                 | Scale-up simples                      | Menor complexidade e custo                  |
-| Modelo grande, inference             | Tensor parallel + NVLink              | Evita overhead de rede                      |
-| Training de modelo > 70B             | Scale-out + InfiniBand                | Comunicação coletiva é o gargalo         |
-| Cluster de inference multi-nó       | Scale-out                             | Throughput horizontal                       |
-| Orçamento limitado de rede           | Evitar InfiniBand se possível         | Ethernet de alta performance pode bastar    |
+| Model fits in 1 GPU                  | Simple scale-up                       | Lower complexity and cost                   |
+| Large model, inference               | Tensor parallel + NVLink              | Avoids network overhead                     |
+| Training model > 70B                 | Scale-out + InfiniBand                | Collective communication is the bottleneck  |
+| Multi-node inference cluster         | Scale-out                             | Horizontal throughput                       |
+| Limited network budget               | Avoid InfiniBand if possible          | High-performance Ethernet may be enough     |
 
 ---
 
-## Checklist do capítulo
+## Chapter checklist
 
-- [ ] Entendo por que HBM é o recurso mais escasso em inference?
-- [ ] Consigo explicar a diferença entre NVLink e InfiniBand para um stakeholder?
-- [ ] Sei quando um modelo exige tensor parallel?
-- [ ] Consigo mapear essas decisões para SKUs do Azure (ND-series)?
-- [ ] Entendo o impacto do tamanho de contexto no consumo de HBM?
+- [ ] Do I understand why HBM is the scarcest resource in inference?
+- [ ] Can I explain the difference between NVLink and InfiniBand to a stakeholder?
+- [ ] Do I know when a model requires tensor parallel?
+- [ ] Can I map these decisions to Azure SKUs (ND-series)?
+- [ ] Do I understand the impact of context size on HBM consumption?
 
 ---
 
-## O que vem a seguir
+## What comes next
 
-No Capítulo 4 entramos no coração da inference em escala: **Prefill vs Decode, Continuous Batching, PagedAttention e Disaggregated Serving**. É o capítulo que transforma o conhecimento de hardware em decisões de arquitetura de serviço.
-
-Quer ajustes neste capítulo ou seguimos para o Capítulo 4?
+In Chapter 4 we enter the heart of inference at scale: **Prefill vs Decode, Continuous Batching, PagedAttention and Disaggregated Serving**. It is the chapter that turns hardware knowledge into service architecture decisions.
