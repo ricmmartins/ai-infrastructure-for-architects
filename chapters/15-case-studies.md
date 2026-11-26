@@ -1,80 +1,80 @@
-# Capítulo 15 — Case Studies
+# Chapter 15 — Case Studies
 
-Os padrões só fazem sentido quando você vê o que quebra se a decisão oposta for tomada.
+Patterns only make sense when you see what breaks if the opposite decision is taken.
 
 ---
 
-## Case 1 — Inference de alto volume
+## Case 1 — High-volume inference
 
-Empresa com ~2.000 requests por minuto de um modelo de suporte. TTFT precisa ficar abaixo de 400 ms e o custo por milhão de tokens não pode passar de um teto definido.
+Company with ~2,000 requests per minute of a support model. TTFT needs to stay below 400 ms and the cost per million tokens cannot exceed a defined ceiling.
 
-![Case Study: Inference em Escala](../assets/ch15-case-inference.svg)
+![Case Study: Inference at Scale](../assets/ch15-case-inference.svg)
 
-| Aspecto              | Decisão                              | Motivo                              | O que quebraria se fosse o contrário          |
+| Aspect               | Decision                              | Reason                              | What would break if it were the opposite |
 |----------------------|---------------------------------------|-------------------------------------|----------------------------------------------|
-| Engine               | vLLM no AKS                           | Continuous batching + PagedAttention | Foundry gerenciado: custo por token mais alto em volume |
-| Arquitetura          | Disaggregated (Prefill + Decode)      | Otimizar TTFT e throughput          | Pool único: TTFT sobe ou utilization cai     |
-| Hardware             | ND-series H100                        | HBM + NVLink                        | SKU sem HBM suficiente: OOM ou quantização agressiva |
-| Escala               | Autoscaling por utilization           | Controle de custo                   | Escala fixa: paga ocioso ou perde requests  |
-| Modelo               | FP8                                   | Cabe na HBM                         | FP16: menos requests por GPU                |
+| Engine               | vLLM on AKS                           | Continuous batching + PagedAttention | Managed Foundry: higher cost per token at volume |
+| Architecture         | Disaggregated (Prefill + Decode)      | Optimize TTFT and throughput        | Single pool: TTFT rises or utilization falls |
+| Hardware             | ND-series H100                        | HBM + NVLink                        | SKU without enough HBM: OOM or aggressive quantization |
+| Scale                | Autoscaling by utilization            | Cost control                        | Fixed scale: pays for idle or drops requests |
+| Model                | FP8                                   | Fits in HBM                         | FP16: fewer requests per GPU             |
 
-Ordem de magnitude: cluster de dezenas de GPUs. Sem disaggregated, o TTFT piorava ~2x em prompts longos. Complexidade operacional aceita em troca de custo por token competitivo.
+Order of magnitude: cluster of dozens of GPUs. Without disaggregated, TTFT worsened ~2x on long prompts. Operational complexity accepted in exchange for competitive cost per token.
 
 ---
 
-## Case 2 — Agent com RAG controlado
+## Case 2 — Controlled agent with RAG
 
-Sistema interno para consultar políticas e abrir tickets. Volume moderado, mas risco de ação indesejada e de custo explodir.
+Internal system to query policies and open tickets. Moderate volume, but risk of unwanted action and cost explosion.
 
-![Case Study: Agent com RAG](../assets/ch15-case-agent.svg)
+![Case Study: Agent with RAG](../assets/ch15-case-agent.svg)
 
-| Aspecto              | Decisão                              | Motivo                              | O que quebraria se fosse o contrário          |
+| Aspect               | Decision                              | Reason                              | What would break if it were the opposite |
 |----------------------|---------------------------------------|-------------------------------------|----------------------------------------------|
-| Padrão               | Agent + RAG                           | Precisa de dados + ações             | Só inference: não executa a ação          |
-| Limite               | Máximo de 6 steps                    | Controlar amplificação               | Sem limite: custo por execução 10–20x maior |
-| Tools                | Limitadas e auditadas                 | Reduzir side-effects                | Tools amplas: risco de ação não auditada   |
-| HITL                 | Para ações que alteram dados         | Segurança                            | Sem HITL: ações críticas sem aprovação     |
-| Observabilidade      | Custo por execução + steps            | Visibilidade                        | Só métricas de infra: não sabe por que o custo subiu |
+| Pattern              | Agent + RAG                           | Needs data + actions                | Inference only: does not execute the action |
+| Limit                | Maximum of 6 steps                    | Control amplification               | No limit: cost per execution 10–20x higher |
+| Tools                | Limited and audited                   | Reduce side-effects                 | Broad tools: risk of unaudited action    |
+| HITL                 | For actions that change data          | Security                            | No HITL: critical actions without approval |
+| Observability        | Cost per execution + steps            | Visibility                          | Infra metrics only: does not know why cost rose |
 
-Ordem de magnitude: sem o limite de steps, uma execução podia custar o equivalente a 15–20 chamadas de inference simples. O limite mantém previsibilidade.
+Order of magnitude: without the step limit, one execution could cost the equivalent of 15–20 simple inference calls. The limit keeps predictability.
 
 ---
 
-## Case 3 — Híbrido (Closed + Open)
+## Case 3 — Hybrid (Closed + Open)
 
-Dados sensíveis não podem sair do perímetro. O restante do volume é alto e pode usar modelo fechado.
+Sensitive data cannot leave the perimeter. The rest of the volume is high and can use a closed model.
 
-| Aspecto              | Decisão                              | Motivo                              | O que quebraria se fosse o contrário          |
+| Aspect               | Decision                              | Reason                              | What would break if it were the opposite |
 |----------------------|---------------------------------------|-------------------------------------|----------------------------------------------|
-| Router               | Classificação de dados                | Data residency                      | Sem router: ou tudo sai ou tudo fica caro   |
-| Caminho sensível     | Open weights self-hosted              | Dados não saem                     | Tudo em Foundry: viola residency            |
-| Caminho geral        | Modelo fechado                        | Qualidade                           | Tudo self-hosted: operação e custo fixo altos |
-| Fallback             | Caminho simples sempre disponível      | Resiliência                         | Sem fallback: falha no router para o sistema |
+| Router               | Data classification                   | Data residency                      | No router: either everything leaves or everything is expensive |
+| Sensitive path       | Self-hosted open weights              | Data does not leave                 | Everything in Foundry: violates residency |
+| General path         | Closed model                          | Quality                             | Everything self-hosted: high fixed operations and cost |
+| Fallback             | Simple path always available          | Resilience                          | No fallback: router failure stops the system |
 
-Ordem de magnitude: o caminho self-hosted só se justifica acima de um volume estável que amortiza as GPUs. Abaixo disso o custo fixo não compensa.
+Order of magnitude: the self-hosted path is only justified above a stable volume that amortizes the GPUs. Below that the fixed cost does not compensate.
 
 ---
 
-## Lições
+## Lessons
 
-Comece simples. Adicione complexidade só quando medir o problema que o padrão atual não resolve.
+Start simple. Add complexity only when you measure the problem that the current pattern does not solve.
 
-Limites explícitos (steps, tools, custo) são mais confiáveis do que confiar no comportamento do modelo.
+Explicit limits (steps, tools, cost) are more reliable than relying on model behavior.
 
-Observabilidade precisa cobrir o nível de agent, não só de infraestrutura. Sem isso o FinOps chega tarde.
+Observability needs to cover the agent level, not just infrastructure. Without this FinOps arrives late.
 
-O router é frequentemente o lugar onde as decisões mais importantes acontecem. Concentre a lógica lá.
+The router is often the place where the most important decisions happen. Concentrate the logic there.
 
 ---
 
 ## Checklist
 
-- [ ] Consigo dizer o que quebraria em cada case se a decisão oposta tivesse sido tomada?
-- [ ] Tenho uma ordem de magnitude de custo ou escala para cada case?
-- [ ] Sei quando disaggregated serving vale a complexidade?
-- [ ] Consigo propor limites claros para um agent antes de colocá-lo em produção?
-- [ ] Reconheço o papel do router em arquiteturas híbridas?
+- [ ] Can I say what would break in each case if the opposite decision had been taken?
+- [ ] Do I have an order of magnitude of cost or scale for each case?
+- [ ] Do I know when disaggregated serving is worth the complexity?
+- [ ] Can I propose clear limits for an agent before putting it in production?
+- [ ] Do I recognize the role of the router in hybrid architectures?
 
 ---
 
-Próximo: Decision Matrices e Checklists. Ferramentas prontas para usar em reunião.
+Next: Decision Matrices and Checklists. Ready-to-use tools for meetings.
