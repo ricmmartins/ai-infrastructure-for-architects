@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Padrões de Dados para AI</title>
+  <desc>Principais padrões de armazenamento e movimentação de dados em arquiteturas de AI.</desc>
+
+  <text x="360" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Padrões de Dados</text>
+
+  <rect x="40" y="70" width="200" height="220" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="140" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#1a3a5c">Training Data</text>
+  <text x="140" y="140" text-anchor="middle" font-size="11" fill="#333">Object Storage</text>
+  <text x="140" y="160" text-anchor="middle" font-size="11" fill="#333">Alto throughput</text>
+  <text x="140" y="180" text-anchor="middle" font-size="11" fill="#333">Checkpoints</text>
+  <text x="140" y="220" text-anchor="middle" font-size="11" fill="#555">Azure Blob / ADLS</text>
+
+  <rect x="260" y="70" width="200" height="220" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="360" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#2d5a1b">RAG / Vector</text>
+  <text x="360" y="140" text-anchor="middle" font-size="11" fill="#333">Vector Database</text>
+  <text x="360" y="160" text-anchor="middle" font-size="11" fill="#333">Baixa latência</text>
+  <text x="360" y="180" text-anchor="middle" font-size="11" fill="#333">Hybrid search</text>
+  <text x="360" y="220" text-anchor="middle" font-size="11" fill="#555">AI Search / Qdrant</text>
+
+  <rect x="480" y="70" width="200" height="220" rx="10" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="580" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#5a3d6a">Model Artifacts</text>
+  <text x="580" y="140" text-anchor="middle" font-size="11" fill="#333">Pesos versionados</text>
+  <text x="580" y="160" text-anchor="middle" font-size="11" fill="#333">Registries</text>
+  <text x="580" y="180" text-anchor="middle" font-size="11" fill="#333">Deploy rápido</text>
+  <text x="580" y="220" text-anchor="middle" font-size="11" fill="#555">Blob + Versioning</text>
+</svg>
