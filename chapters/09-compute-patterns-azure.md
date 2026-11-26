@@ -1,63 +1,52 @@
 # Capítulo 9 — Compute Patterns no Azure
-## ND-series, AKS, Foundry e CycleCloud
 
-> “A escolha do padrão de compute define o quanto de controle e o quanto de operação você vai ter nos próximos 12 meses.”
+A escolha do padrão de compute define o quanto de controle e o quanto de operação você vai carregar nos próximos 12 meses. Errar aqui é caro de desfazer.
 
 ---
 
-## Os três padrões principais
+## Os três padrões
 
 ![Padrões de Compute no Azure para AI](../assets/ch9-compute-patterns.svg)
 
-| Padrão                  | Melhor para                     | Nível de controle | Operação | Exemplos de uso              |
-|------------------------|---------------------------------|------------------|-----------|------------------------------|
-| **Gerenciado**             | Velocidade e simplicidade      | Baixo            | Baixa     | Foundry, Azure OpenAI        |
-| **AKS + Engine**           | Equilíbrio controle/operação   | Alto             | Média     | vLLM, SGLang em ND-series    |
-| **HPC (CycleCloud/Slurm)** | Training em larga escala       | Muito alto       | Alta      | Fine-tuning e pre-training   |
+| Padrão                  | Melhor para                     | Controle | Operação | Quando quebra                          |
+|------------------------|---------------------------------|----------|-----------|----------------------------------------|
+| Gerenciado (Foundry)   | Velocidade e equipe pequena    | Baixo    | Baixa     | Volume alto ou controle fino de inference |
+| AKS + Engine           | Equilíbrio controle/operação   | Alto     | Média     | Equipe sem maturidade em Kubernetes/GPU |
+| HPC (CycleCloud/Slurm) | Training em larga escala       | Muito alto| Alta     | Inference online ou jobs curtos        |
+
+A maioria dos times começa gerenciado e só migra quando o custo por token ou o requisito de customização de inference passa a doer.
 
 ---
 
-## ND-series: o hardware
+## ND-series: o que realmente importa
 
-As VMs ND-series (H100, H200, B200) são a base da maioria dos workloads de AI no Azure.
+As VMs ND-series (H100, H200, B200) são a base. O arquiteto precisa saber três coisas:
 
-**O que o arquiteto precisa saber:**
-- Quantidade de GPUs por VM
-- Presença de NVLink (scale-up)
-- Opções de InfiniBand (scale-out)
-- Quantidade de HBM
+- Quantidade de HBM por GPU (define se o modelo cabe sem quantização agressiva).
+- Presença de NVLink (scale-up dentro do nó).
+- Opção de InfiniBand (scale-out entre nós).
 
-Essas características definem se o modelo cabe, se precisa de tensor parallel e qual o teto de escala.
+InfiniBand é quase sempre desperdício para inference. É obrigatório para training distribuído de modelos grandes. Escolher a SKU errada aqui trava o design por meses.
 
 ---
 
 ## AKS + vLLM / SGLang
 
-Este é o padrão mais comum quando o arquiteto quer controle sem construir tudo do zero.
+Esse é o padrão quando você precisa de continuous batching, PagedAttention e controle de quantização sem montar um cluster HPC.
 
-**Vantagens:**
-- Uso de engines otimizadas (PagedAttention, continuous batching)
-- Integração com o ecossistema Kubernetes
-- Possibilidade de misturar com outros workloads
+Decisões que mudam o resultado:
 
-**Decisões:**
-- Tamanho do node pool
-- Estratégia de autoscaling
-- Como fazer rollout de novos modelos
-- Observabilidade de GPU
+- Tamanho do node pool e estratégia de autoscaling (GPU demora para subir).
+- Como fazer rollout de novo modelo sem derrubar requests em andamento.
+- Observabilidade de GPU utilization e KV cache hit rate.
+
+Sem isso, o cluster fica caro e subutilizado. Com isso, você consegue custo por token competitivo com Foundry em volume alto.
 
 ---
 
 ## CycleCloud / Slurm
 
-Usado principalmente para training e jobs longos.
-
-**Quando faz sentido:**
-- Jobs que duram horas ou dias
-- Necessidade de scheduling avançado
-- Clusters grandes com InfiniBand
-
-**Trade-off:** maior complexidade operacional. Não é a melhor escolha para inference online.
+Serve para jobs que duram horas ou dias e precisam de gang scheduling e InfiniBand. Não serve para inference online. O overhead operacional é alto e só se justifica quando o job de training não pode recomeçar do zero.
 
 ---
 
@@ -65,38 +54,37 @@ Usado principalmente para training e jobs longos.
 
 ![Decisão de Compute Pattern](../assets/ch9-decision-compute.svg)
 
-### Perguntas-chave
-1. O workload é principalmente inference/agents ou training?
-2. Quanto controle sobre o engine de inference você precisa?
-3. Qual é a capacidade da equipe de operar Kubernetes ou Slurm?
-4. O volume justifica a complexidade de self-managed?
+Pergunte nesta ordem:
+
+1. O workload principal é training ou inference/agents?
+2. Quanto controle sobre o engine de inference você realmente precisa?
+3. A equipe opera Kubernetes ou Slurm hoje?
+4. O volume atual ou projetado justifica a complexidade?
+
+Se a resposta para 3 for não e o volume ainda for baixo, fique no gerenciado. Migrar depois é possível. Começar self-managed sem capacidade operacional gera dívida rápida.
 
 ---
 
 ## Quando usar / quando não usar
 
-| Situação                              | Padrão recomendado                    |
-|--------------------------------------|---------------------------------------|
-| Começar rápido com agents             | Foundry                               |
-| Inference em escala com controle     | AKS + vLLM/SGLang                     |
-| Training de modelo grande            | CycleCloud / Slurm                    |
-| Mistura de inference e training      | Separar os ambientes                  |
-| Equipe sem experiência em GPU          | Comece gerenciado                     |
+| Situação                              | Padrão recomendado                    | Motivo principal                  |
+|--------------------------------------|---------------------------------------|-----------------------------------|
+| Começar rápido, equipe pequena        | Foundry                               | Velocidade de entrega             |
+| Inference em escala com controle     | AKS + vLLM/SGLang                     | Utilization e custo por token     |
+| Training de modelo grande            | CycleCloud / Slurm                    | InfiniBand + scheduling           |
+| Mistura de inference e training      | Ambientes separados                   | Perfis de carga diferentes        |
+| Equipe sem experiência em GPU          | Gerenciado                            | Risco operacional                 |
 
 ---
 
-## Checklist do capítulo
+## Checklist
 
-- [ ] Consigo explicar a diferença entre os três padrões de compute?
-- [ ] Sei quando usar AKS + vLLM vs Foundry?
-- [ ] Entendo o papel do ND-series e InfiniBand?
-- [ ] Tenho critérios claros para escolher o padrão?
-- [ ] Consigo justificar a escolha para um stakeholder?
+- [ ] Sei a diferença prática entre os três padrões e quando cada um quebra?
+- [ ] Consigo justificar AKS + vLLM vs Foundry com volume ou requisito de controle?
+- [ ] Entendo por que InfiniBand quase nunca vale para inference?
+- [ ] Tenho critério para não começar self-managed sem capacidade operacional?
+- [ ] Consigo explicar a escolha para um stakeholder sem listar serviços?
 
 ---
 
-## O que vem a seguir
-
-No Capítulo 10 vamos falar de **Networking, Storage e Data Patterns** para AI no Azure. Como a rede e o armazenamento afetam training, inference e RAG.
-
-Quer ajustes neste capítulo ou seguimos para o Capítulo 10?
+Próximo capítulo: Networking, Storage e Data Patterns. Rede e dados deixam de ser detalhe e passam a afetar tempo de training, latência de RAG e viabilidade de scale-out.
