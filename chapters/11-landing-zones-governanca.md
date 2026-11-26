@@ -1,81 +1,81 @@
-# Capítulo 11 — Landing Zones e Governança para AI
+# Chapter 11 — Landing Zones and Governance for AI
 
-Uma Landing Zone boa não impede inovação. Ela impede que cada time invente a sua própria forma de fazer a mesma coisa e crie dívida ou risco que o resto da empresa paga depois.
-
----
-
-## Por que AI precisa de governança específica
-
-Workloads de AI adicionam três problemas que landing zones tradicionais não cobriam bem:
-
-- Custo de GPU que cresce rápido e é difícil de prever.
-- Agents que executam ações com side-effects.
-- Dados que não podem sair de um perímetro definido.
-
-Sem guardrails, o primeiro time que coloca um agent em produção define o padrão (ou a falta dele) para os próximos.
+A good Landing Zone does not prevent innovation. It prevents each team from inventing its own way of doing the same thing and creating debt or risk that the rest of the company pays for later.
 
 ---
 
-## Estrutura
+## Why AI needs specific governance
 
-![Landing Zone para AI](../assets/ch11-landing-zone.svg)
+AI workloads add three problems that traditional landing zones did not cover well:
 
-| Camada              | Responsabilidade                          | O que acontece se falhar              |
+- GPU cost that grows fast and is hard to predict.
+- Agents that execute actions with side-effects.
+- Data that cannot leave a defined perimeter.
+
+Without guardrails, the first team that puts an agent in production defines the standard (or the lack of it) for the next ones.
+
+---
+
+## Structure
+
+![Landing Zone for AI](../assets/ch11-landing-zone.svg)
+
+| Layer               | Responsibility                            | What happens if it fails              |
 |---------------------|-------------------------------------------|---------------------------------------|
-| Management          | Políticas globais                         | SKUs caras liberadas sem controle     |
-| Platform            | Identidade, rede, monitoramento           | Cada workload inventa o seu próprio   |
-| Shared Services     | AI Search, Storage, Key Vault             | Duplicação e inconsistência            |
-| Workloads           | Inference, training, agents               | Isolamento fraco ou custo invisível   |
+| Management          | Global policies                           | Expensive SKUs released without control |
+| Platform            | Identity, network, monitoring             | Each workload invents its own         |
+| Shared Services     | AI Search, Storage, Key Vault             | Duplication and inconsistency         |
+| Workloads           | Inference, training, agents               | Weak isolation or invisible cost      |
 
-A separação entre platform e workloads é o que permite o time de AI se mover sem pedir permissão para cada recurso, desde que fique dentro dos guardrails.
-
----
-
-## Camadas que importam
-
-![Camadas de Governança para AI](../assets/ch11-governance-layers.svg)
-
-Políticas: restringir regiões e SKUs de GPU, exigir tags de custo. Sem isso o primeiro cluster H100 aparece em uma subscription de teste.
-
-Identidade: Managed Identity e menor privilégio para agents e tools. Agents com permissão ampla são o vetor de risco mais novo.
-
-Rede: Private Endpoints como padrão. Exposição pública de AI Search ou Storage cria risco sem ganho mensurável na maioria dos casos.
-
-Observabilidade e custo: todo workload de AI precisa de visibilidade de custo por execução ou por job. Agents precisam de rastreabilidade de steps e tool calls. Sem isso o FinOps chega tarde.
+The separation between platform and workloads is what allows the AI team to move without asking permission for every resource, as long as it stays within the guardrails.
 
 ---
 
-## Decisões práticas
+## Layers that matter
 
-| Decisão                              | Recomendação                              | Por quê                                 |
+![Governance Layers for AI](../assets/ch11-governance-layers.svg)
+
+Policies: restrict regions and GPU SKUs, require cost tags. Without this the first H100 cluster appears in a test subscription.
+
+Identity: Managed Identity and least privilege for agents and tools. Agents with broad permissions are the newest risk vector.
+
+Network: Private Endpoints as standard. Public exposure of AI Search or Storage creates risk without measurable gain in most cases.
+
+Observability and cost: every AI workload needs visibility of cost per execution or per job. Agents need traceability of steps and tool calls. Without this FinOps arrives late.
+
+---
+
+## Practical decisions
+
+| Decision                             | Recommendation                            | Why                                    |
 |--------------------------------------|-------------------------------------------|----------------------------------------|
-| Quantas subscriptions?               | Separar por ambiente e criticidade        | Isolamento de custo e risco            |
-| Quem cria recursos de GPU?           | Policy + RBAC                             | Evitar surpresa de custo               |
-| Dados sensíveis                      | Subscription ou resource group dedicado   | Perímetro claro                        |
-| Padrão de rede                       | Hub-spoke ou Virtual WAN + Private Link   | Consistência                           |
-| Observabilidade                      | Centralizada desde o início                | Custo e risco visíveis cedo            |
+| How many subscriptions?              | Separate by environment and criticality   | Isolation of cost and risk             |
+| Who creates GPU resources?           | Policy + RBAC                             | Avoid cost surprise                    |
+| Sensitive data                       | Dedicated subscription or resource group  | Clear perimeter                        |
+| Network standard                     | Hub-spoke or Virtual WAN + Private Link   | Consistency                            |
+| Observability                        | Centralized from the start                | Cost and risk visible early            |
 
 ---
 
-## Quando usar / quando não usar
+## When to use / when not to use
 
-| Situação                              | Abordagem                             | Motivo principal                  |
+| Situation                             | Approach                              | Main reason                       |
 |--------------------------------------|---------------------------------------|-----------------------------------|
-| Múltiplos times de AI                  | Landing Zone estruturada              | Evitar divergência                |
-| Projeto piloto pequeno               | Pode começar mais simples             | Velocidade                        |
-| Requisitos fortes de compliance      | Governança rígida desde o início        | Risco regulatório                 |
-| Crescimento rápido esperado           | Invista na Landing Zone cedo          | Custo de corrigir depois          |
+| Multiple AI teams                    | Structured Landing Zone               | Avoid divergence                  |
+| Small pilot project                  | Can start simpler                     | Speed                             |
+| Strong compliance requirements       | Rigid governance from the start       | Regulatory risk                   |
+| Expected rapid growth                | Invest in the Landing Zone early      | Cost of fixing later              |
 
 ---
 
 ## Checklist
 
-- [ ] Consigo explicar para um stakeholder o que a Landing Zone impede que aconteça?
-- [ ] Sei quais políticas de GPU e tags são o mínimo viável?
-- [ ] Agents e tools têm menor privilégio definido?
-- [ ] Private Endpoints são o padrão ou ainda são exceção?
-- [ ] Custo por workload de AI é visível antes do primeiro mês de produção?
+- [ ] Can I explain to a stakeholder what the Landing Zone prevents from happening?
+- [ ] Do I know which GPU policies and tags are the minimum viable?
+- [ ] Do agents and tools have least privilege defined?
+- [ ] Are Private Endpoints the standard or still an exception?
+- [ ] Is cost per AI workload visible before the first month of production?
 
 ---
 
-Com este capítulo fechamos a Part III. Próximo: Cost, FinOps e Observabilidade. É onde as decisões de arquitetura encontram o número que o negócio realmente vê.
+With this chapter we close Part III. Next: Cost, FinOps and Observability. This is where architecture decisions meet the number the business actually sees.
