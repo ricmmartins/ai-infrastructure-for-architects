@@ -1,90 +1,90 @@
-# Capítulo 9 — Compute Patterns no Azure
+# Chapter 9 — Compute Patterns on Azure
 
-A escolha do padrão de compute define o quanto de controle e o quanto de operação você vai carregar nos próximos 12 meses. Errar aqui é caro de desfazer.
-
----
-
-## Os três padrões
-
-![Padrões de Compute no Azure para AI](../assets/ch9-compute-patterns.svg)
-
-| Padrão                  | Melhor para                     | Controle | Operação | Quando quebra                          |
-|------------------------|---------------------------------|----------|-----------|----------------------------------------|
-| Gerenciado (Foundry)   | Velocidade e equipe pequena    | Baixo    | Baixa     | Volume alto ou controle fino de inference |
-| AKS + Engine           | Equilíbrio controle/operação   | Alto     | Média     | Equipe sem maturidade em Kubernetes/GPU |
-| HPC (CycleCloud/Slurm) | Training em larga escala       | Muito alto| Alta     | Inference online ou jobs curtos        |
-
-A maioria dos times começa gerenciado e só migra quando o custo por token ou o requisito de customização de inference passa a doer.
+The choice of compute pattern defines how much control and how much operation you will carry for the next 12 months. Getting this wrong is expensive to undo.
 
 ---
 
-## ND-series: o que realmente importa
+## The three patterns
 
-As VMs ND-series (H100, H200, B200) são a base. O arquiteto precisa saber três coisas:
+![Compute Patterns on Azure for AI](../assets/ch9-compute-patterns.svg)
 
-- Quantidade de HBM por GPU (define se o modelo cabe sem quantização agressiva).
-- Presença de NVLink (scale-up dentro do nó).
-- Opção de InfiniBand (scale-out entre nós).
+| Pattern                 | Best for                        | Control | Operations | When it breaks                         |
+|-------------------------|---------------------------------|---------|------------|----------------------------------------|
+| Managed (Foundry)       | Speed and small team           | Low     | Low        | High volume or fine inference control  |
+| AKS + Engine            | Control/operations balance     | High    | Medium     | Team without Kubernetes/GPU maturity   |
+| HPC (CycleCloud/Slurm)  | Large-scale training           | Very high| High     | Online inference or short jobs         |
 
-InfiniBand é quase sempre desperdício para inference. É obrigatório para training distribuído de modelos grandes. Escolher a SKU errada aqui trava o design por meses.
+Most teams start managed and only migrate when the cost per token or the requirement for inference customization starts to hurt.
+
+---
+
+## ND-series: what actually matters
+
+ND-series VMs (H100, H200, B200) are the foundation. The architect needs to know three things:
+
+- Amount of HBM per GPU (defines whether the model fits without aggressive quantization).
+- Presence of NVLink (scale-up inside the node).
+- InfiniBand option (scale-out between nodes).
+
+InfiniBand is almost always waste for inference. It is mandatory for distributed training of large models. Choosing the wrong SKU here locks the design for months.
 
 ---
 
 ## AKS + vLLM / SGLang
 
-Esse é o padrão quando você precisa de continuous batching, PagedAttention e controle de quantização sem montar um cluster HPC.
+This is the pattern when you need continuous batching, PagedAttention and quantization control without building an HPC cluster.
 
-Decisões que mudam o resultado:
+Decisions that change the outcome:
 
-- Tamanho do node pool e estratégia de autoscaling (GPU demora para subir).
-- Como fazer rollout de novo modelo sem derrubar requests em andamento.
-- Observabilidade de GPU utilization e KV cache hit rate.
+- Node pool size and autoscaling strategy (GPUs take time to come up).
+- How to roll out a new model without dropping in-flight requests.
+- Observability of GPU utilization and KV cache hit rate.
 
-Sem isso, o cluster fica caro e subutilizado. Com isso, você consegue custo por token competitivo com Foundry em volume alto.
+Without this, the cluster becomes expensive and underutilized. With this, you can achieve cost per token competitive with Foundry at high volume.
 
 ---
 
 ## CycleCloud / Slurm
 
-Serve para jobs que duram horas ou dias e precisam de gang scheduling e InfiniBand. Não serve para inference online. O overhead operacional é alto e só se justifica quando o job de training não pode recomeçar do zero.
+Serves jobs that last hours or days and need gang scheduling and InfiniBand. It does not serve online inference. The operational overhead is high and is only justified when the training job cannot restart from zero.
 
 ---
 
-## Framework de decisão
+## Decision framework
 
-![Decisão de Compute Pattern](../assets/ch9-decision-compute.svg)
+![Compute Pattern Decision](../assets/ch9-decision-compute.svg)
 
-Pergunte nesta ordem:
+Ask in this order:
 
-1. O workload principal é training ou inference/agents?
-2. Quanto controle sobre o engine de inference você realmente precisa?
-3. A equipe opera Kubernetes ou Slurm hoje?
-4. O volume atual ou projetado justifica a complexidade?
+1. Is the main workload training or inference/agents?
+2. How much control over the inference engine do you really need?
+3. Does the team operate Kubernetes or Slurm today?
+4. Does the current or projected volume justify the complexity?
 
-Se a resposta para 3 for não e o volume ainda for baixo, fique no gerenciado. Migrar depois é possível. Começar self-managed sem capacidade operacional gera dívida rápida.
+If the answer to 3 is no and the volume is still low, stay managed. Migrating later is possible. Starting self-managed without operational capacity creates debt quickly.
 
 ---
 
-## Quando usar / quando não usar
+## When to use / when not to use
 
-| Situação                              | Padrão recomendado                    | Motivo principal                  |
+| Situation                             | Recommended pattern                   | Main reason                       |
 |--------------------------------------|---------------------------------------|-----------------------------------|
-| Começar rápido, equipe pequena        | Foundry                               | Velocidade de entrega             |
-| Inference em escala com controle     | AKS + vLLM/SGLang                     | Utilization e custo por token     |
-| Training de modelo grande            | CycleCloud / Slurm                    | InfiniBand + scheduling           |
-| Mistura de inference e training      | Ambientes separados                   | Perfis de carga diferentes        |
-| Equipe sem experiência em GPU          | Gerenciado                            | Risco operacional                 |
+| Start fast, small team               | Foundry                               | Delivery speed                    |
+| Inference at scale with control      | AKS + vLLM/SGLang                     | Utilization and cost per token    |
+| Large model training                 | CycleCloud / Slurm                    | InfiniBand + scheduling           |
+| Mix of inference and training        | Separate environments                 | Different load profiles           |
+| Team without GPU experience          | Managed                               | Operational risk                  |
 
 ---
 
 ## Checklist
 
-- [ ] Sei a diferença prática entre os três padrões e quando cada um quebra?
-- [ ] Consigo justificar AKS + vLLM vs Foundry com volume ou requisito de controle?
-- [ ] Entendo por que InfiniBand quase nunca vale para inference?
-- [ ] Tenho critério para não começar self-managed sem capacidade operacional?
-- [ ] Consigo explicar a escolha para um stakeholder sem listar serviços?
+- [ ] Do I know the practical difference between the three patterns and when each one breaks?
+- [ ] Can I justify AKS + vLLM vs Foundry with volume or control requirements?
+- [ ] Do I understand why InfiniBand is almost never worth it for inference?
+- [ ] Do I have a criterion not to start self-managed without operational capacity?
+- [ ] Can I explain the choice to a stakeholder without listing services?
 
 ---
 
-Próximo capítulo: Networking, Storage e Data Patterns. Rede e dados deixam de ser detalhe e passam a afetar tempo de training, latência de RAG e viabilidade de scale-out.
+Next chapter: Networking, Storage and Data Patterns. Network and data stop being a detail and start affecting training time, RAG latency and scale-out viability.
