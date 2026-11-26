@@ -1,77 +1,77 @@
-# Capítulo 14 — Hybrid e Multi-pattern Architectures
+# Chapter 14 — Hybrid and Multi-pattern Architectures
 
-Arquiteturas reais raramente usam um único padrão. Elas combinam vários. O trabalho do arquiteto é definir onde cada padrão começa e termina, e o que acontece na fronteira.
-
----
-
-## Por que híbridos aparecem
-
-Sistemas de produção misturam modelos fechados e open weights, RAG e agents, serviços gerenciados e self-hosted. Cada combinação resolve um problema e cria outro. O erro comum é espalhar a lógica de decisão por todo o sistema em vez de concentrá-la.
+Real architectures rarely use a single pattern. They combine several. The architect's job is to define where each pattern starts and ends, and what happens at the boundary.
 
 ---
 
-## Padrões híbridos comuns
+## Why hybrids appear
 
-![Padrões Híbridos Comuns](../assets/ch14-hybrid-patterns.svg)
-
-| Padrão Híbrido          | Quando usar                              | Benefício principal               | Quando não vale a pena                |
-|------------------------|------------------------------------------|----------------------------------|----------------------------------------|
-| Closed + Open          | Volume alto + qualidade em casos difíceis| Custo otimizado                  | Volume baixo ou equipe pequena         |
-| RAG + Agent            | Tarefas que precisam de dados e ação    | Capacidade maior                 | Tarefa simples que inference resolve   |
-| Managed + Self-hosted  | Transição ou controle seletivo          | Equilíbrio operação/controle     | Sem critério claro de roteamento       |
-| Prefill/Decode split   | Clusters grandes de inference            | Utilization melhor               | Clusters pequenos                      |
-
-A maioria dos híbridos só se justifica depois que você mediu o problema que o padrão simples não resolve.
+Production systems mix closed models and open weights, RAG and agents, managed services and self-hosted. Each combination solves one problem and creates another. The common mistake is to spread the decision logic throughout the system instead of concentrating it.
 
 ---
 
-## O router como fronteira
+## Common hybrid patterns
 
-![Composição de Padrões](../assets/ch14-composition.svg)
+![Common Hybrid Patterns](../assets/ch14-hybrid-patterns.svg)
 
-Um router (ou camada de orquestração) é o lugar onde a maioria das decisões de padrão deve acontecer:
+| Hybrid Pattern          | When to use                              | Main benefit                     | When it is not worth it                |
+|-------------------------|------------------------------------------|----------------------------------|----------------------------------------|
+| Closed + Open           | High volume + quality in hard cases      | Optimized cost                   | Low volume or small team               |
+| RAG + Agent             | Tasks that need data and action          | Greater capability               | Simple task that inference solves      |
+| Managed + Self-hosted   | Transition or selective control          | Operations/control balance       | No clear routing criterion             |
+| Prefill/Decode split    | Large inference clusters                 | Better utilization               | Small clusters                         |
 
-- Qual modelo usar?
-- Precisa de RAG?
-- Deve ir para um agent?
-- Qual pool de inference?
-
-Concentrar a lógica ali evita que cada serviço invente sua própria regra. Também facilita medir custo, latência e qualidade por caminho.
-
----
-
-## Princípios que evitam complexidade desnecessária
-
-Fronteiras claras. Cada padrão tem responsabilidade definida. Se não consegue explicar em uma frase o que aquele caminho faz, ele provavelmente está fazendo demais.
-
-Observabilidade na fronteira. Meça custo, latência e qualidade em cada caminho. Sem isso você não sabe se o híbrido está ganhando ou só adicionando operação.
-
-Fallback. Tenha um caminho simples quando o caminho complexo falhar. Agents e routers complexos falham. O sistema precisa continuar funcionando.
-
-Evolução gradual. Comece simples. Adicione o próximo padrão só quando houver evidência de que o atual não resolve.
+Most hybrids are only justified after you have measured the problem that the simple pattern does not solve.
 
 ---
 
-## Quando usar / quando não usar
+## The router as boundary
 
-| Situação                              | Abordagem                             | Motivo principal                  |
+![Pattern Composition](../assets/ch14-composition.svg)
+
+A router (or orchestration layer) is the place where most pattern decisions should happen:
+
+- Which model to use?
+- Does it need RAG?
+- Should it go to an agent?
+- Which inference pool?
+
+Concentrating the logic there prevents each service from inventing its own rule. It also makes it easier to measure cost, latency and quality per path.
+
+---
+
+## Principles that avoid unnecessary complexity
+
+Clear boundaries. Each pattern has a defined responsibility. If you cannot explain in one sentence what that path does, it is probably doing too much.
+
+Observability at the boundary. Measure cost, latency and quality on each path. Without this you do not know whether the hybrid is winning or just adding operations.
+
+Fallback. Have a simple path when the complex path fails. Agents and complex routers fail. The system needs to keep working.
+
+Gradual evolution. Start simple. Add the next pattern only when there is evidence that the current one does not solve.
+
+---
+
+## When to use / when not to use
+
+| Situation                             | Approach                              | Main reason                       |
 |--------------------------------------|---------------------------------------|-----------------------------------|
-| Otimizar custo em volume alto        | Closed + Open com router              | Break-even mensurável             |
-| Tarefas complexas com dados          | RAG + Agent                           | Capacidade                        |
-| Equipe em transição                    | Managed + Self-hosted                 | Risco controlado                  |
-| Sistema ainda pequeno                | Evite híbridos                        | Complexidade prematura            |
-| Requisitos muito diferentes por request | Router bem definido                 | Decisão centralizada              |
+| Optimize cost at high volume         | Closed + Open with router             | Measurable break-even             |
+| Complex tasks with data              | RAG + Agent                           | Capability                        |
+| Team in transition                   | Managed + Self-hosted                 | Controlled risk                   |
+| System still small                   | Avoid hybrids                         | Premature complexity              |
+| Very different requirements per request | Well-defined router                 | Centralized decision              |
 
 ---
 
 ## Checklist
 
-- [ ] Consigo identificar quando um sistema realmente precisa de mais de um padrão?
-- [ ] A lógica de roteamento está concentrada ou espalhada?
-- [ ] Cada caminho tem observabilidade de custo e qualidade?
-- [ ] Existe fallback simples?
-- [ ] Consigo explicar por que o híbrido é necessário e não só interessante?
+- [ ] Can I identify when a system really needs more than one pattern?
+- [ ] Is the routing logic concentrated or spread out?
+- [ ] Does each path have cost and quality observability?
+- [ ] Is there a simple fallback?
+- [ ] Can I explain why the hybrid is necessary and not just interesting?
 
 ---
 
-Com este capítulo fechamos a Part IV. Próximo: Case Studies. É onde os padrões se encontram com restrições reais.
+With this chapter we close Part IV. Next: Case Studies. This is where patterns meet real constraints.
