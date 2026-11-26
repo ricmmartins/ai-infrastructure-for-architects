@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Padrões de RAG</title>
+  <desc>Comparação entre RAG simples, hybrid search e agentic RAG.</desc>
+
+  <text x="360" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Padrões de RAG</text>
+
+  <!-- Simple RAG -->
+  <rect x="30" y="60" width="200" height="260" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="130" y="90" text-anchor="middle" font-weight="bold" font-size="14" fill="#1a3a5c">RAG Simples</text>
+  <text x="130" y="130" text-anchor="middle" font-size="11" fill="#333">1 retrieval</text>
+  <text x="130" y="155" text-anchor="middle" font-size="11" fill="#333">Vector search</text>
+  <text x="130" y="180" text-anchor="middle" font-size="11" fill="#333">Baixa latência</text>
+  <text x="130" y="205" text-anchor="middle" font-size="11" fill="#333">Menor custo</text>
+  <text x="130" y="250" text-anchor="middle" font-size="11" fill="#555">Bom para FAQs</text>
+  <text x="130" y="270" text-anchor="middle" font-size="11" fill="#555">e conhecimento estático</text>
+
+  <!-- Hybrid -->
+  <rect x="260" y="60" width="200" height="260" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="360" y="90" text-anchor="middle" font-weight="bold" font-size="14" fill="#2d5a1b">Hybrid Search</text>
+  <text x="360" y="130" text-anchor="middle" font-size="11" fill="#333">Vector + Keyword</text>
+  <text x="360" y="155" text-anchor="middle" font-size="11" fill="#333">Reranking</text>
+  <text x="360" y="180" text-anchor="middle" font-size="11" fill="#333">Melhor precisão</text>
+  <text x="360" y="205" text-anchor="middle" font-size="11" fill="#333">Latência média</text>
+  <text x="360" y="250" text-anchor="middle" font-size="11" fill="#555">Recomendado para</text>
+  <text x="360" y="270" text-anchor="middle" font-size="11" fill="#555">a maioria dos casos</text>
+
+  <!-- Agentic RAG -->
+  <rect x="490" y="60" width="200" height="260" rx="10" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="590" y="90" text-anchor="middle" font-weight="bold" font-size="14" fill="#5a3d6a">Agentic RAG</text>
+  <text x="590" y="130" text-anchor="middle" font-size="11" fill="#333">Múltiplos retrievals</text>
+  <text x="590" y="155" text-anchor="middle" font-size="11" fill="#333">Query rewriting</text>
+  <text x="590" y="180" text-anchor="middle" font-size="11" fill="#333">Maior custo</text>
+  <text x="590" y="205" text-anchor="middle" font-size="11" fill="#333">Maior latência</text>
+  <text x="590" y="250" text-anchor="middle" font-size="11" fill="#555">Quando a query</text>
+  <text x="590" y="270" text-anchor="middle" font-size="11" fill="#555">é complexa</text>
+</svg>
