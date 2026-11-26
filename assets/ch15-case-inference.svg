@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Case Study: Inference em Escala</title>
+  <desc>Arquitetura simplificada de um sistema de inference de alto volume.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <text x="360" y="30" text-anchor="middle" font-weight="bold" font-size="16" fill="#1a3a5c">Case: Inference de Alto Volume</text>
+
+  <rect x="40" y="60" width="120" height="45" rx="6" fill="#fff2cc" stroke="#d6b656"/>
+  <text x="100" y="88" text-anchor="middle" font-size="11" fill="#7a5900">API Gateway</text>
+
+  <line x1="160" y1="82" x2="200" y2="82" stroke="#666" marker-end="url(#arrow)"/>
+
+  <rect x="210" y="50" width="140" height="65" rx="6" fill="#dae8fc" stroke="#6c8ebf"/>
+  <text x="280" y="78" text-anchor="middle" font-size="11" fill="#1a3a5c">Load Balancer</text>
+  <text x="280" y="95" text-anchor="middle" font-size="10" fill="#555">+ Router</text>
+
+  <line x1="350" y1="70" x2="390" y2="55" stroke="#666" marker-end="url(#arrow)"/>
+  <line x1="350" y1="95" x2="390" y2="110" stroke="#666" marker-end="url(#arrow)"/>
+
+  <rect x="400" y="40" width="130" height="45" rx="6" fill="#d5e8d4" stroke="#82b366"/>
+  <text x="465" y="68" text-anchor="middle" font-size="11" fill="#2d5a1b">Prefill Pool</text>
+
+  <rect x="400" y="100" width="130" height="45" rx="6" fill="#d5e8d4" stroke="#82b366"/>
+  <text x="465" y="128" text-anchor="middle" font-size="11" fill="#2d5a1b">Decode Pool</text>
+
+  <text x="360" y="180" text-anchor="middle" font-size="11" fill="#333">Disaggregated serving + continuous batching</text>
+  <text x="360" y="200" text-anchor="middle" font-size="11" fill="#333">ND-series + vLLM no AKS</text>
+  <text x="360" y="230" text-anchor="middle" font-size="11" fill="#555">Resultado: melhor utilization e TTFT controlado</text>
+</svg>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 280" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Case Study: Agent com RAG</title>
+  <desc>Arquitetura de um agent que usa RAG e tools com limites claros.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <text x="340" y="30" text-anchor="middle" font-weight="bold" font-size="16" fill="#1a3a5c">Case: Agent + RAG Controlado</text>
+
+  <rect x="40" y="60" width="110" height="40" rx="6" fill="#fff2cc" stroke="#d6b656"/>
+  <text x="95" y="85" text-anchor="middle" font-size="11" fill="#7a5900">User</text>
+
+  <line x1="150" y1="80" x2="190" y2="80" stroke="#666" marker-end="url(#arrow)"/>
+
+  <rect x="200" y="50" width="140" height="60" rx="6" fill="#e1d5e7" stroke="#9673a6"/>
+  <text x="270" y="75" text-anchor="middle" font-size="11" fill="#5a3d6a">Agent</text>
+  <text x="270" y="92" text-anchor="middle" font-size="10" fill="#555">Max 6 steps</text>
+
+  <line x1="340" y1="70" x2="380" y2="55" stroke="#666" marker-end="url(#arrow)"/>
+  <line x1="340" y1="90" x2="380" y2="105" stroke="#666" marker-end="url(#arrow)"/>
+
+  <rect x="390" y="40" width="120" height="40" rx="6" fill="#dae8fc" stroke="#6c8ebf"/>
+  <text x="450" y="65" text-anchor="middle" font-size="10" fill="#1a3a5c">RAG / Search</text>
+
+  <rect x="390" y="95" width="120" height="40" rx="6" fill="#d5e8d4" stroke="#82b366"/>
+  <text x="450" y="120" text-anchor="middle" font-size="10" fill="#2d5a1b">Tools (limitadas)</text>
+
+  <text x="340" y="170" text-anchor="middle" font-size="11" fill="#333">Limite de steps + observabilidade de custo</text>
+  <text x="340" y="190" text-anchor="middle" font-size="11" fill="#333">HITL para ações críticas</text>
+</svg>
