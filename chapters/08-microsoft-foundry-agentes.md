@@ -1,86 +1,86 @@
-# Capítulo 8 — Microsoft Foundry e Padrões de Agentes
+# Chapter 8 — Microsoft Foundry and Agent Patterns
 
-Foundry tira a operação de GPU da sua mesa. O que sobra é decidir o que você não pode terceirizar: limites de agent, data residency e quando o custo de um loop de tools justifica o risco.
+Foundry takes GPU operations off your plate. What remains is deciding what you cannot outsource: agent limits, data residency and when the cost of a tool loop justifies the risk.
 
 ---
 
-## O que a plataforma realmente abstrai
+## What the platform actually abstracts
 
-Foundry dá acesso a modelos, orquestração de agents e avaliação em um ambiente gerenciado. Isso reduz o tempo para o primeiro agent funcionar. Não reduz a responsabilidade pelas decisões que afetam custo, risco e qualidade.
+Foundry gives access to models, agent orchestration and evaluation in a managed environment. This reduces the time to the first working agent. It does not reduce the responsibility for decisions that affect cost, risk and quality.
 
-![Visão geral do Microsoft Foundry para Arquitetos](../assets/ch8-foundry-overview.svg)
+![Microsoft Foundry overview for Architects](../assets/ch8-foundry-overview.svg)
 
-| Camada              | O que a plataforma faz                    | O que continua sendo seu problema          |
+| Layer               | What the platform does                    | What remains your problem                  |
 |---------------------|-------------------------------------------|--------------------------------------------|
-| Model Catalog       | Disponibiliza modelos closed e open       | Escolher o modelo e o ponto de roteamento  |
-| Agent Service       | Roda o loop, tools e memória                | Definir limites de steps, tools e HITL     |
-| Evaluation          | Oferece métricas de qualidade e segurança   | Decidir quais métricas importam para o negócio |
-| Infraestrutura      | Provisiona compute, rede e identidade     | Isolamento, governança e data residency    |
+| Model Catalog       | Makes closed and open models available    | Choosing the model and the routing point   |
+| Agent Service       | Runs the loop, tools and memory           | Defining step limits, tools and HITL       |
+| Evaluation          | Offers quality and safety metrics         | Deciding which metrics matter for the business |
+| Infrastructure      | Provisions compute, network and identity  | Isolation, governance and data residency   |
 
-Na prática, a maioria dos times usa Foundry para entregar o primeiro agent e só sai dele quando o custo por execução ou o requisito de controle de inference fica maior do que a plataforma resolve.
-
----
-
-## Padrões de agents e quando cada um quebra
-
-![Padrões de Agentes no Foundry](../assets/ch8-agent-patterns.svg)
-
-| Padrão              | Complexidade | Controle | Quando funciona                        | Quando quebra                              |
-|--------------------|--------------|----------|----------------------------------------|--------------------------------------------|
-| Single Agent       | Baixa        | Alto     | Tarefa bem definida, poucos tools      | Precisa de especialização ou contexto longo |
-| Agent + Tools      | Média        | Alto     | Maioria dos casos de negócio            | Tools têm side-effects sem HITL            |
-| Multi-Agent        | Alta         | Médio    | Processo com etapas claramente separadas | Coordenação fica mais cara que o valor     |
-
-Comece com Single Agent ou Agent + Tools. Multi-Agent só vale quando você já mediu que um agent único não consegue manter qualidade ou que o custo de contexto está explodindo.
+In practice, most teams use Foundry to deliver the first agent and only leave it when the cost per execution or the requirement for inference control becomes larger than what the platform solves.
 
 ---
 
-## Foundry vs self-managed: o trade-off real
+## Agent patterns and when each one breaks
 
-| Critério                     | Foundry                          | AKS + vLLM/SGLang                     |
+![Agent Patterns in Foundry](../assets/ch8-agent-patterns.svg)
+
+| Pattern             | Complexity | Control | When it works                          | When it breaks                             |
+|---------------------|------------|---------|----------------------------------------|--------------------------------------------|
+| Single Agent        | Low        | High    | Well-defined task, few tools           | Needs specialization or long context       |
+| Agent + Tools       | Medium     | High    | Most business cases                    | Tools have side-effects without HITL       |
+| Multi-Agent         | High       | Medium  | Process with clearly separated stages  | Coordination becomes more expensive than the value |
+
+Start with Single Agent or Agent + Tools. Multi-Agent is only worth it when you have already measured that a single agent cannot maintain quality or that context cost is exploding.
+
+---
+
+## Foundry vs self-managed: the real trade-off
+
+| Criterion                    | Foundry                          | AKS + vLLM/SGLang                     |
 |------------------------------|----------------------------------|---------------------------------------|
-| Tempo até o primeiro agent   | Dias                             | Semanas                               |
-| Controle de inference        | Limitado                         | Total (quantização, batching, cache)  |
-| Operação de GPU              | Baixa                            | Alta                                  |
-| Custo em volume alto e estável| Pode ficar mais caro             | Costuma ficar menor                   |
-| Data residency / isolamento  | Depende da configuração           | Total                                 |
+| Time to first agent          | Days                             | Weeks                                 |
+| Inference control            | Limited                          | Full (quantization, batching, cache)  |
+| GPU operations               | Low                              | High                                  |
+| Cost at high and stable volume| Can become more expensive        | Usually becomes lower                 |
+| Data residency / isolation   | Depends on configuration         | Full                                  |
 
-Foundry ganha quando a equipe é pequena ou o volume ainda não justifica operar GPU. Self-managed ganha quando o custo por milhão de tokens ou o requisito de dados que não podem sair do perímetro passam a ser o problema principal.
-
----
-
-## Governança que importa
-
-Três pontos que quebram agents em produção:
-
-1. Tools com side-effects sem aprovação humana.
-2. Ausência de limite de steps (o custo cresce sem teto).
-3. Falta de observabilidade do loop inteiro (não só do modelo).
-
-Mesmo no Foundry você precisa de custo por execução, número de steps, taxa de falha de tools e um caminho de fallback simples.
+Foundry wins when the team is small or the volume does not yet justify operating GPUs. Self-managed wins when the cost per million tokens or the requirement that data cannot leave the perimeter becomes the main problem.
 
 ---
 
-## Quando usar / quando não usar
+## Governance that matters
 
-| Situação                              | Recomendação                          | Motivo principal                     |
+Three points that break agents in production:
+
+1. Tools with side-effects without human approval.
+2. Absence of a step limit (cost grows without a ceiling).
+3. Lack of observability of the entire loop (not just the model).
+
+Even in Foundry you need cost per execution, number of steps, tool failure rate and a simple fallback path.
+
+---
+
+## When to use / when not to use
+
+| Situation                             | Recommendation                        | Main reason                          |
 |--------------------------------------|---------------------------------------|--------------------------------------|
-| Primeiro agent, equipe pequena       | Foundry                               | Velocidade de entrega                |
-| Volume alto e custo por token importa| AKS + engine open source              | Controle de utilization              |
-| Dados sensíveis que não podem sair    | Self-managed ou híbrido                | Data residency                       |
-| Precisa de fine-tuning profundo      | Avaliar self-managed                  | Foundry tem limites de customização    |
-| Requisitos de rede muito específicos  | Self-managed                          | Controle de isolamento               |
+| First agent, small team              | Foundry                               | Delivery speed                       |
+| High volume and cost per token matters| AKS + open source engine             | Utilization control                  |
+| Sensitive data that cannot leave     | Self-managed or hybrid                | Data residency                       |
+| Needs deep fine-tuning               | Evaluate self-managed                 | Foundry has customization limits     |
+| Very specific network requirements   | Self-managed                          | Isolation control                    |
 
 ---
 
 ## Checklist
 
-- [ ] Sei o que o Foundry tira da minha mesa e o que continua sendo meu problema?
-- [ ] Tenho limite de steps e HITL definidos antes de colocar o agent em produção?
-- [ ] Consigo justificar Foundry vs self-managed com número de volume ou requisito de dados?
-- [ ] O custo por execução é observável?
-- [ ] Existe fallback simples se o loop de tools falhar?
+- [ ] Do I know what Foundry takes off my plate and what remains my problem?
+- [ ] Do I have step limits and HITL defined before putting the agent in production?
+- [ ] Can I justify Foundry vs self-managed with volume numbers or data requirements?
+- [ ] Is cost per execution observable?
+- [ ] Is there a simple fallback if the tool loop fails?
 
 ---
 
-Próximo capítulo: Compute Patterns no Azure. É onde as decisões de plataforma encontram as escolhas concretas de SKU e orquestração.
+Next chapter: Compute Patterns on Azure. This is where platform decisions meet concrete SKU and orchestration choices.
