@@ -1,73 +1,73 @@
-# Capítulo 12 — Cost, FinOps e Observabilidade
+# Chapter 12 — Cost, FinOps and Observability
 
-Em AI o custo não é consequência. É variável de design. Decisões de modelo, contexto, steps e utilization mudam o custo em ordens de magnitude.
+In AI cost is not a consequence. It is a design variable. Decisions about model, context, steps and utilization change cost by orders of magnitude.
 
 ---
 
-## Drivers principais
+## Main drivers
 
-![Principais Drivers de Custo em AI](../assets/ch12-cost-drivers.svg)
+![Main Cost Drivers in AI](../assets/ch12-cost-drivers.svg)
 
-| Driver              | O que influencia                          | Alavanca do arquiteto                  |
+| Driver              | What it influences                        | Architect lever                        |
 |---------------------|-------------------------------------------|----------------------------------------|
-| Compute (GPU)       | Utilization, tipo de GPU, tempo de uso    | Batching, quantização, right-sizing    |
-| Tokens              | Tamanho de input/output, steps de agent   | Limitar contexto e steps               |
-| Dados & Storage     | Volume de training data, vector DB        | Lifecycle, retenção                    |
-| Rede                | Egress, transferência de dados             | Co-localização, Private Link            |
+| Compute (GPU)       | Utilization, GPU type, usage time         | Batching, quantization, right-sizing   |
+| Tokens              | Input/output size, agent steps            | Limit context and steps                |
+| Data & Storage      | Training data volume, vector DB           | Lifecycle, retention                   |
+| Network             | Egress, data transfer                     | Co-location, Private Link              |
 
 ---
 
-## Modelo de custo por modo
+## Cost model by mode
 
-| Modo          | Unidade principal de custo     | Como controlar                           |
+| Mode          | Main cost unit                 | How to control                           |
 |---------------|--------------------------------|------------------------------------------|
-| Training      | GPU-hours                      | Duração do job, eficiência de paralelismo |
-| Inference     | Custo por milhão de tokens      | Modelo, quantização, batching           |
-| Agents        | Tokens × steps                  | Limite de steps, escolha de tools       |
-| RAG           | Retrieval + tokens             | Qualidade do índice, reranking         |
+| Training      | GPU-hours                      | Job duration, parallelism efficiency     |
+| Inference     | Cost per million tokens        | Model, quantization, batching            |
+| Agents        | Tokens × steps                 | Step limit, tool choice                  |
+| RAG           | Retrieval + tokens             | Index quality, reranking                 |
 
 ---
 
-## Observabilidade
+## Observability
 
-![Camadas de Observabilidade para AI](../assets/ch12-observability-layers.svg)
+![Observability Layers for AI](../assets/ch12-observability-layers.svg)
 
-Três níveis:
+Three levels:
 
-1. Infraestrutura — GPU utilization, latência, erros.
-2. Modelo — tokens por request, TTFT, qualidade.
-3. Agent / Aplicação — número de steps, tool calls, custo por execução.
+1. Infrastructure — GPU utilization, latency, errors.
+2. Model — tokens per request, TTFT, quality.
+3. Agent / Application — number of steps, tool calls, cost per execution.
 
-Sem o terceiro nível você não sabe por que o custo de um agent explodiu.
-
----
-
-## Práticas de FinOps
-
-Tagging consistente dá visibilidade por time ou produto. Orçamentos e alertas evitam surpresa. Right-sizing de GPU reduz desperdício. Limite de steps em agents controla amplificação. Avaliação periódica de modelos permite trocar para opção mais barata quando a qualidade aceita.
+Without the third level you do not know why an agent's cost exploded.
 
 ---
 
-## Quando usar / quando não usar
+## FinOps practices
 
-| Situação                              | Abordagem                             | O que quebra se não fizer               |
-|--------------------------------------|---------------------------------------|---------------------------------------|
-| Alto volume de inference             | Otimizar utilization e quantização     | Paga GPU ociosa ou modelo maior que o necessário |
-| Agents em produção                    | Limites rígidos de steps + observabilidade | Custo por execução sem teto            |
-| Training frequente                   | Monitorar GPU-hours de perto          | Jobs longos sem visibilidade          |
-| Projeto piloto                       | Aceitar custo maior no início          | Otimizar cedo demais atrasa entrega   |
-| Necessidade de previsibilidade       | Modelos gerenciados + limites         | Self-managed sem capacidade: surpresa |
+Consistent tagging gives visibility by team or product. Budgets and alerts avoid surprises. GPU right-sizing reduces waste. Step limits on agents control amplification. Periodic model evaluation allows switching to a cheaper option when quality accepts it.
+
+---
+
+## When to use / when not to use
+
+| Situation                             | Approach                              | What breaks if you do not              |
+|--------------------------------------|---------------------------------------|----------------------------------------|
+| High volume inference                | Optimize utilization and quantization | Pays for idle GPU or larger model than needed |
+| Agents in production                 | Strict step limits + observability    | Cost per execution without ceiling     |
+| Frequent training                    | Monitor GPU-hours closely             | Long jobs without visibility           |
+| Pilot project                        | Accept higher cost at the start       | Optimizing too early delays delivery   |
+| Need for predictability              | Managed models + limits               | Self-managed without capacity: surprise |
 
 ---
 
 ## Checklist
 
-- [ ] Consigo identificar os principais drivers de custo de um sistema de AI?
-- [ ] Sei a diferença de modelo de custo entre training, inference e agents?
-- [ ] Entendo por que observabilidade de agent é diferente de observabilidade tradicional?
-- [ ] Tenho práticas de FinOps aplicáveis a workloads de AI?
-- [ ] Consigo estimar o impacto de uma decisão arquitetural no custo?
+- [ ] Can I identify the main cost drivers of an AI system?
+- [ ] Do I know the difference in cost model between training, inference and agents?
+- [ ] Do I understand why agent observability is different from traditional observability?
+- [ ] Do I have FinOps practices applicable to AI workloads?
+- [ ] Can I estimate the impact of an architecture decision on cost?
 
 ---
 
-Próximo: Security, Privacy e Compliance. Onde dados sensíveis e agents com side-effects mudam o design.
+Next: Security, Privacy and Compliance. Where sensitive data and agents with side-effects change the design.
