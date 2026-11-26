@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Principais Drivers de Custo em AI</title>
+  <desc>Os principais fatores que determinam o custo de sistemas de AI do ponto de vista do arquiteto.</desc>
+
+  <text x="360" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Drivers de Custo</text>
+
+  <rect x="40" y="70" width="200" height="220" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="140" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#1a3a5c">Compute</text>
+  <text x="140" y="140" text-anchor="middle" font-size="11" fill="#333">GPU-hours</text>
+  <text x="140" y="160" text-anchor="middle" font-size="11" fill="#333">Utilization</text>
+  <text x="140" y="180" text-anchor="middle" font-size="11" fill="#333">Tipo de GPU</text>
+  <text x="140" y="220" text-anchor="middle" font-size="11" fill="#555">Maior custo na maioria dos casos</text>
+
+  <rect x="260" y="70" width="200" height="220" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="360" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#2d5a1b">Tokens</text>
+  <text x="360" y="140" text-anchor="middle" font-size="11" fill="#333">Input + Output</text>
+  <text x="360" y="160" text-anchor="middle" font-size="11" fill="#333">Steps de Agent</text>
+  <text x="360" y="180" text-anchor="middle" font-size="11" fill="#333">Context length</text>
+  <text x="360" y="220" text-anchor="middle" font-size="11" fill="#555">Cresce com complexidade</text>
+
+  <rect x="480" y="70" width="200" height="220" rx="10" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="580" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#7a5900">Dados & Rede</text>
+  <text x="580" y="140" text-anchor="middle" font-size="11" fill="#333">Storage</text>
+  <text x="580" y="160" text-anchor="middle" font-size="11" fill="#333">Vector DB</text>
+  <text x="580" y="180" text-anchor="middle" font-size="11" fill="#333">Egress</text>
+  <text x="580" y="220" text-anchor="middle" font-size="11" fill="#555">Frequentemente subestimado</text>
+</svg>
