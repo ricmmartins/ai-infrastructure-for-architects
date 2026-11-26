@@ -1,120 +1,118 @@
-# Capítulo 6 — Agents e Sistemas Agentic
-## Perception, Planning, Action e a amplificação de custo
+# Chapter 6 — Agents and Agentic Systems
+## Perception, Planning, Action and cost amplification
 
-> “Um agent não é uma inference mais inteligente. É um sistema que pode se multiplicar em custo e risco a cada passo.”
-
----
-
-## O que é um agent para o arquiteto
-
-Um agent é um sistema que:
-1. **Percebe** o estado atual
-2. **Planeja** o próximo passo
-3. **Age** (chamando um modelo, uma tool ou outro sistema)
-4. Repete até atingir o objetivo ou um limite
-
-Diferente de uma inference simples, o agent mantém estado, toma decisões intermediárias e pode causar side-effects.
+> “An agent is not smarter inference. It is a system that can multiply in cost and risk at every step.”
 
 ---
 
-## O loop fundamental
+## What an agent is for the architect
 
-![Loop básico de um Agent](../assets/ch6-agent-loop.svg)
+An agent is a system that:
+1. **Perceives** the current state
+2. **Plans** the next step
+3. **Acts** (calling a model, a tool or another system)
+4. Repeats until it reaches the goal or a limit
 
-Cada volta no loop consome:
-- Tokens (custo)
-- Tempo (latência)
-- Risco de falha ou comportamento inesperado
-
----
-
-## Amplificação de custo e latência
-
-![Amplificação de Custo em Agents](../assets/ch6-cost-amplification.svg)
-
-| Tipo de sistema          | Chamadas de modelo | Custo relativo | Latência relativa |
-|--------------------------|--------------------|----------------|------------------|
-| Inference simples        | 1                  | 1×             | 1×               |
-| Agent com 5 steps        | 5–8                | 8–12×          | 5–10×            |
-| Agent com tools          | 8–15               | 12–20×         | 8–15×            |
-| Multi-agent              | 15–40              | 20–50×         | 15–30×           |
-
-**Regra do arquiteto:** defina um limite máximo de steps e tenha observabilidade de custo por execução.
+Unlike simple inference, the agent maintains state, makes intermediate decisions and can cause side-effects.
 
 ---
 
-## Tipos de memória
+## The fundamental loop
 
-| Tipo              | Duração     | Uso típico                     | Impacto arquitetural          |
+![Basic Agent loop](../assets/ch6-agent-loop.svg)
+
+Each turn of the loop consumes:
+- Tokens (cost)
+- Time (latency)
+- Risk of failure or unexpected behavior
+
+---
+
+## Cost and latency amplification
+
+![Cost Amplification in Agents](../assets/ch6-cost-amplification.svg)
+
+| System type              | Model calls | Relative cost | Relative latency |
+|--------------------------|-------------|---------------|------------------|
+| Simple inference         | 1           | 1×            | 1×               |
+| Agent with 5 steps       | 5–8         | 8–12×         | 5–10×            |
+| Agent with tools         | 8–15        | 12–20×        | 8–15×            |
+| Multi-agent              | 15–40       | 20–50×        | 15–30×           |
+
+**Architect's rule:** define a maximum number of steps and have cost observability per execution.
+
+---
+
+## Types of memory
+
+| Type              | Duration    | Typical use                    | Architectural impact          |
 |-------------------|-------------|--------------------------------|-------------------------------|
-| Curto prazo       | Sessão     | Contexto da conversa           | KV cache / janela de contexto |
-| Longo prazo       | Persistente | Preferências, histórico        | Vector DB ou banco            |
-| Episódica         | Por tarefa  | Passos anteriores do agent     | Estado da orquestração       |
+| Short-term        | Session     | Conversation context           | KV cache / context window     |
+| Long-term         | Persistent  | Preferences, history           | Vector DB or database         |
+| Episodic          | Per task    | Previous agent steps           | Orchestration state           |
 
 ---
 
-## Tools e side-effects
+## Tools and side-effects
 
-Tools são a forma como o agent interage com o mundo real (APIs, bancos, sistemas internos).
+Tools are how the agent interacts with the real world (APIs, databases, internal systems).
 
-**Decisões do arquiteto:**
-- Quais tools o agent pode chamar?
-- Elas são idempotentes?
-- Existe aprovação humana para ações críticas?
-- Como isolar o blast radius de uma tool mal comportada?
+**Architect decisions:**
+- Which tools can the agent call?
+- Are they idempotent?
+- Is there human approval for critical actions?
+- How to isolate the blast radius of a misbehaving tool?
 
 ---
 
 ## Multi-agent
 
-Usar vários agents especializados pode melhorar a qualidade, mas aumenta drasticamente a complexidade e o custo.
+Using several specialized agents can improve quality, but dramatically increases complexity and cost.
 
-**Quando considerar:**
-- Tarefas que exigem expertises muito diferentes
-- Necessidade de debate ou verificação cruzada
-- Sistemas onde a separação de responsabilidades reduz risco
+**When to consider:**
+- Tasks that require very different expertise
+- Need for debate or cross-verification
+- Systems where separation of responsibilities reduces risk
 
-**Quando evitar:**
-- A maioria dos casos no início
-- Quando o custo e a latência são críticos
+**When to avoid:**
+- Most cases at the beginning
+- When cost and latency are critical
 
 ---
 
-## Framework de decisão
+## Decision framework
 
-| Pergunta                              | Se sim →                          | Se não →                     |
+| Question                              | If yes →                          | If no →                      |
 |---------------------------------------|-----------------------------------|-------------------------------|
-| A tarefa exige múltiplos passos?       | Considere agent                   | Use inference simples         |
-| Existem side-effects?                 | Adicione controles e HITL         | Pode ser mais autônomo        |
-| O custo por execução precisa ser previsível? | Limite steps + observabilidade | Monitore e ajuste depois     |
-| Precisa de memória de longo prazo?    | Adicione store externo            | Contexto da sessão basta      |
+| Does the task require multiple steps? | Consider agent                    | Use simple inference          |
+| Are there side-effects?               | Add controls and HITL             | Can be more autonomous        |
+| Does cost per execution need to be predictable? | Limit steps + observability | Monitor and adjust later      |
+| Need long-term memory?                | Add external store                | Session context is enough     |
 
 ---
 
-## Quando usar / quando não usar
+## When to use / when not to use
 
-| Situação                              | Recomendação                          |
+| Situation                             | Recommendation                        |
 |--------------------------------------|---------------------------------------|
-| Tarefa de um único passo              | Inference simples                     |
-| Processo com 3–7 passos bem definidos | Agent com limite de steps             |
-| Ações que alteram sistemas externos   | Agent + human-in-the-loop             |
-| Necessidade de máxima autonomia       | Multi-agent (com cuidado)             |
-| Orçamento de custo apertado           | Evite agents ou limite fortemente     |
+| Single-step task                     | Simple inference                      |
+| Process with 3–7 well-defined steps | Agent with step limit                 |
+| Actions that change external systems | Agent + human-in-the-loop             |
+| Need for maximum autonomy            | Multi-agent (with care)               |
+| Tight cost budget                    | Avoid agents or limit strongly        |
 
 ---
 
-## Checklist do capítulo
+## Chapter checklist
 
-- [ ] Consigo explicar a diferença entre inference e agent para um stakeholder?
-- [ ] Entendo o efeito de amplificação de custo?
-- [ ] Sei quando colocar human-in-the-loop?
-- [ ] Tenho um framework para decidir se preciso de multi-agent?
-- [ ] Consigo mapear um agent para Microsoft Foundry ou orquestração custom?
+- [ ] Can I explain the difference between inference and agent to a stakeholder?
+- [ ] Do I understand the cost amplification effect?
+- [ ] Do I know when to put human-in-the-loop?
+- [ ] Do I have a framework to decide if I need multi-agent?
+- [ ] Can I map an agent to Microsoft Foundry or custom orchestration?
 
 ---
 
-## O que vem a seguir
+## What comes next
 
-No Capítulo 7 vamos falar de **Open Weights e AI Local**. Quando faz sentido self-host, quais são os trade-offs reais e como desenhar arquiteturas híbridas.
-
-Quer ajustes neste capítulo ou seguimos para o Capítulo 7?
+In Chapter 7 we talk about **Open Weights and Local AI**. When self-hosting makes sense, what the real trade-offs are and how to design hybrid architectures.
