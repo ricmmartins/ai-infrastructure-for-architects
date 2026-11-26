@@ -1,63 +1,65 @@
 # AI for Architects
 
-Handbook de System Design e Infraestrutura de AI para Arquitetos.
+Handbook of System Design and AI Infrastructure for Architects.
 
-Material prático para arquitetos (Cloud, Solution, Enterprise) que precisam entender como sistemas de AI realmente funcionam e tomar decisões conscientes, sem precisar virar desenvolvedores.
+**Disponível em Português:** [Ler em Português](https://github.com/ricmmartins/ai-infrastructure-for-architects/tree/pt-br)
 
-Projeto irmão do [AI for Infra Pros](https://www.ai4infra.com/).
+Practical material for architects (Cloud, Solution, Enterprise) who need to understand how AI systems actually work and make conscious decisions without becoming developers.
 
-## Para quem é
+Sibling project of [AI for Infra Pros](https://www.ai4infra.com/).
 
-Arquitetos que trabalham com clientes avançados em AI e precisam:
+## Who it is for
 
-- Entender trade-offs reais de latência, throughput, custo, resiliência e data residency
-- Conversar no mesmo nível desses clientes
-- Desenhar arquiteturas conscientes
-- Justificar decisões sem depender de hype
+Architects who work with advanced AI clients and need to:
 
-## Estrutura
+- Understand real trade-offs of latency, throughput, cost, resilience, and data residency
+- Talk at the same level as those clients
+- Design conscious architectures
+- Justify decisions without relying on hype
+
+## Structure
 
 ### Part I — Foundations
-1. [Por que AI é diferente](chapters/01-por-que-ai-e-diferente.md)
+1. [Why AI is different](chapters/01-por-que-ai-e-diferente.md)
 2. [Training vs Inference vs Agents](chapters/02-training-vs-inference-vs-agents.md)
-3. [Compute, Memória e Conectividade](chapters/03-compute-memoria-conectividade.md)
+3. [Compute, Memory and Connectivity](chapters/03-compute-memoria-conectividade.md)
 
 ### Part II — Core Patterns
-4. [Inference em Escala](chapters/04-inference-em-escala.md)
-5. [RAG e Retrieval Architectures](chapters/05-rag-retrieval-architectures.md)
-6. [Agents e Sistemas Agentic](chapters/06-agents-sistemas-agentic.md)
-7. [Open Weights e AI Local](chapters/07-open-weights-ai-local.md)
+4. [Inference at Scale](chapters/04-inference-em-escala.md)
+5. [RAG and Retrieval Architectures](chapters/05-rag-retrieval-architectures.md)
+6. [Agents and Agentic Systems](chapters/06-agents-sistemas-agentic.md)
+7. [Open Weights and Local AI](chapters/07-open-weights-ai-local.md)
 
 ### Part III — Azure Patterns
-8. [Microsoft Foundry e Padrões de Agentes](chapters/08-microsoft-foundry-agentes.md)
-9. [Compute Patterns no Azure](chapters/09-compute-patterns-azure.md)
-10. [Networking, Storage e Data Patterns](chapters/10-networking-storage-data.md)
-11. [Landing Zones e Governança para AI](chapters/11-landing-zones-governanca.md)
+8. [Microsoft Foundry and Agent Patterns](chapters/08-microsoft-foundry-agentes.md)
+9. [Compute Patterns on Azure](chapters/09-compute-patterns-azure.md)
+10. [Networking, Storage and Data Patterns](chapters/10-networking-storage-data.md)
+11. [Landing Zones and Governance for AI](chapters/11-landing-zones-governanca.md)
 
 ### Part IV — Decision Frameworks
-12. [Cost, FinOps e Observabilidade](chapters/12-cost-finops-observabilidade.md)
-13. [Security, Privacy e Compliance em AI](chapters/13-security-privacy-compliance.md)
-14. [Hybrid e Multi-pattern Architectures](chapters/14-hybrid-multi-pattern.md)
+12. [Cost, FinOps and Observability](chapters/12-cost-finops-observabilidade.md)
+13. [Security, Privacy and Compliance in AI](chapters/13-security-privacy-compliance.md)
+14. [Hybrid and Multi-pattern Architectures](chapters/14-hybrid-multi-pattern.md)
 
 ### Part V — Practice
-15. [Case Studies Profundos](chapters/15-case-studies.md)
-16. [Decision Matrices e Checklists](chapters/16-decision-matrices-checklists.md)
-17. [Glossário Visual para Arquitetos](chapters/17-glossario-visual.md)
+15. [Deep Case Studies](chapters/15-case-studies.md)
+16. [Decision Matrices and Checklists](chapters/16-decision-matrices-checklists.md)
+17. [Visual Glossary for Architects](chapters/17-glossario-visual.md)
 
-## Como usar
+## How to use
 
-Leia sequencialmente se estiver construindo base. No dia a dia, vá direto para as Decision Matrices e Checklists do Capítulo 16.
+Read sequentially if you are building a foundation. In day-to-day work, go straight to the Decision Matrices and Checklists in Chapter 16.
 
-Para cada conceito, pergunte: qual o impacto em compute, rede, storage, latência, custo e risco?
+For every concept, ask: what is the impact on compute, network, storage, latency, cost and risk?
 
-## Diagramas
+## Diagrams
 
-Todos os diagramas seguem o skill [svg-diagrams-skill](https://github.com/ricmmartins/svg-diagrams-skill).
+All diagrams follow the [svg-diagrams-skill](https://github.com/ricmmartins/svg-diagrams-skill).
 
-## Contribua
+## Contribute
 
-Pull requests com melhorias, novos cases ou diagramas são bem-vindos.
+Pull requests with improvements, new cases or diagrams are welcome.
 
-## Autor
+## Author
 
 [Ricardo Martins](https://github.com/ricmmartins) (Principal Cloud Solution Architect @ Microsoft).
