@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 280" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Matriz de Decisão de Modo</title>
+  <desc>Guia rápido para escolher entre Inference simples, RAG ou Agent.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <text x="340" y="30" text-anchor="middle" font-weight="bold" font-size="16" fill="#1a3a5c">Qual modo usar?</text>
+
+  <rect x="190" y="50" width="300" height="40" rx="6" fill="#dae8fc" stroke="#6c8ebf"/>
+  <text x="340" y="75" text-anchor="middle" font-size="12" fill="#1a3a5c">A tarefa precisa de múltiplos passos ou tools?</text>
+
+  <line x1="250" y1="90" x2="140" y2="130" stroke="#c62828" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="170" y="110" font-size="11" fill="#c62828" font-weight="bold">Sim</text>
+
+  <line x1="430" y1="90" x2="540" y2="130" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="490" y="110" font-size="11" fill="#2e7d32" font-weight="bold">Não</text>
+
+  <rect x="40" y="140" width="200" height="70" rx="6" fill="#e1d5e7" stroke="#9673a6"/>
+  <text x="140" y="170" text-anchor="middle" font-weight="bold" font-size="12" fill="#5a3d6a">Agent</text>
+  <text x="140" y="190" text-anchor="middle" font-size="11" fill="#555">Com limites claros</text>
+
+  <rect x="440" y="140" width="200" height="70" rx="6" fill="#d5e8d4" stroke="#82b366"/>
+  <text x="540" y="170" text-anchor="middle" font-weight="bold" font-size="12" fill="#2d5a1b">Inference ou RAG</text>
+  <text x="540" y="190" text-anchor="middle" font-size="11" fill="#555">Mais simples e previsível</text>
+</svg>
