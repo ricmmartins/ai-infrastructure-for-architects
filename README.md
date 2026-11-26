@@ -50,10 +50,6 @@ Leia sequencialmente se estiver construindo base. No dia a dia, vá direto para 
 
 Para cada conceito, pergunte: qual o impacto em compute, rede, storage, latência, custo e risco?
 
-## Arquivos legado
-
-Os arquivos `guia-estudo.md` e `modulo-ai-local-open-weights.md` são versões anteriores do material. O conteúdo atualizado está nos capítulos. Eles serão removidos em breve.
-
 ## Diagramas
 
 Todos os diagramas seguem o skill [svg-diagrams-skill](https://github.com/ricmmartins/svg-diagrams-skill).
