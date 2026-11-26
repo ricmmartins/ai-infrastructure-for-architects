@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Loop básico de um Agent</title>
+  <desc>Ciclo perception-planning-action de um sistema agentic com memória e tools.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <text x="360" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Loop de um Agent</text>
+
+  <!-- Perception -->
+  <rect x="40" y="80" width="150" height="70" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="115" y="110" text-anchor="middle" font-weight="bold" font-size="13" fill="#1a3a5c">Perception</text>
+  <text x="115" y="130" text-anchor="middle" font-size="11" fill="#555">Observa o estado</text>
+
+  <line x1="190" y1="115" x2="230" y2="115" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Planning -->
+  <rect x="240" y="80" width="150" height="70" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="315" y="110" text-anchor="middle" font-weight="bold" font-size="13" fill="#2d5a1b">Planning</text>
+  <text x="315" y="130" text-anchor="middle" font-size="11" fill="#555">Decide o próximo passo</text>
+
+  <line x1="390" y1="115" x2="430" y2="115" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Action -->
+  <rect x="440" y="80" width="150" height="70" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="515" y="110" text-anchor="middle" font-weight="bold" font-size="13" fill="#5a3d6a">Action</text>
+  <text x="515" y="130" text-anchor="middle" font-size="11" fill="#555">Chama tools / LLM</text>
+
+  <line x1="515" y1="150" x2="515" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Memory -->
+  <rect x="250" y="210" width="220" height="70" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="360" y="240" text-anchor="middle" font-weight="bold" font-size="13" fill="#7a5900">Memória</text>
+  <text x="360" y="260" text-anchor="middle" font-size="11" fill="#555">Curto e longo prazo</text>
+
+  <text x="360" y="320" text-anchor="middle" font-size="12" fill="#333">Cada volta no loop = mais tokens + mais latência + mais risco de falha</text>
+</svg>

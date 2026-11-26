@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 300" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Amplificação de Custo em Agents</title>
+  <desc>Como o número de steps e tool calls amplifica o custo e a latência em sistemas agentic.</desc>
+
+  <text x="340" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Amplificação de Custo</text>
+
+  <!-- Simple -->
+  <rect x="40" y="70" width="180" height="160" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="130" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#2d5a1b">Inference simples</text>
+  <text x="130" y="140" text-anchor="middle" font-size="20" font-weight="bold" fill="#1b5e20">1×</text>
+  <text x="130" y="165" text-anchor="middle" font-size="12" fill="#333">1 chamada</text>
+  <text x="130" y="185" text-anchor="middle" font-size="12" fill="#333">Custo base</text>
+
+  <!-- Agent -->
+  <rect x="250" y="70" width="180" height="160" rx="10" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="340" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#7a5900">Agent (5 steps)</text>
+  <text x="340" y="140" text-anchor="middle" font-size="20" font-weight="bold" fill="#e65100">8–12×</text>
+  <text x="340" y="165" text-anchor="middle" font-size="12" fill="#333">Múltiplas chamadas</text>
+  <text x="340" y="185" text-anchor="middle" font-size="12" fill="#333">+ tools</text>
+
+  <!-- Complex -->
+  <rect x="460" y="70" width="180" height="160" rx="10" fill="#f8cecc" stroke="#b85450" stroke-width="2"/>
+  <text x="550" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#b71c1c">Multi-agent</text>
+  <text x="550" y="140" text-anchor="middle" font-size="20" font-weight="bold" fill="#c62828">20–50×</text>
+  <text x="550" y="165" text-anchor="middle" font-size="12" fill="#333">Orquestração</text>
+  <text x="550" y="185" text-anchor="middle" font-size="12" fill="#333">+ retries</text>
+
+  <text x="340" y="270" text-anchor="middle" font-size="12" fill="#333">O arquiteto precisa controlar o número máximo de steps e ter observabilidade de custo.</text>
+</svg>
