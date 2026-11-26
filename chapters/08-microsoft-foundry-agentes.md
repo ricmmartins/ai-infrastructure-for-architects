@@ -1,98 +1,86 @@
 # Capítulo 8 — Microsoft Foundry e Padrões de Agentes
-## Como o arquiteto usa a plataforma sem perder o controle do design
 
-> “Foundry não substitui o arquiteto. Ele muda o nível em que o arquiteto toma decisões.”
-
----
-
-## O que é o Microsoft Foundry para o arquiteto
-
-Microsoft Foundry é a plataforma que reúne modelos, agents, avaliação e ferramentas de desenvolvimento em um ambiente mais gerenciado.
-
-Do ponto de vista de system design, o arquiteto precisa entender:
-
-- O que a plataforma abstrai
-- O que ainda continua sendo responsabilidade dele
-- Quando faz sentido usar Foundry vs construir em cima de AKS + engines open source
+Foundry tira a operação de GPU da sua mesa. O que sobra é decidir o que você não pode terceirizar: limites de agent, data residency e quando o custo de um loop de tools justifica o risco.
 
 ---
 
-## Visão de camadas
+## O que a plataforma realmente abstrai
+
+Foundry dá acesso a modelos, orquestração de agents e avaliação em um ambiente gerenciado. Isso reduz o tempo para o primeiro agent funcionar. Não reduz a responsabilidade pelas decisões que afetam custo, risco e qualidade.
 
 ![Visão geral do Microsoft Foundry para Arquitetos](../assets/ch8-foundry-overview.svg)
 
-| Camada              | O que a plataforma oferece          | O que o arquiteto ainda decide      |
-|---------------------|-------------------------------------|-------------------------------------|
-| Model Catalog       | Acesso a modelos closed e open      | Qual modelo usar e quando           |
-| Agent Service       | Orquestração, tools, memória        | Limites, tools permitidas, HITL     |
-| Evaluation          | Métricas de qualidade e segurança     | Quais métricas importam para o negócio |
-| Infraestrutura      | Compute, rede, identidade           | Nível de isolamento e governança     |
+| Camada              | O que a plataforma faz                    | O que continua sendo seu problema          |
+|---------------------|-------------------------------------------|--------------------------------------------|
+| Model Catalog       | Disponibiliza modelos closed e open       | Escolher o modelo e o ponto de roteamento  |
+| Agent Service       | Roda o loop, tools e memória                | Definir limites de steps, tools e HITL     |
+| Evaluation          | Oferece métricas de qualidade e segurança   | Decidir quais métricas importam para o negócio |
+| Infraestrutura      | Provisiona compute, rede e identidade     | Isolamento, governança e data residency    |
+
+Na prática, a maioria dos times usa Foundry para entregar o primeiro agent e só sai dele quando o custo por execução ou o requisito de controle de inference fica maior do que a plataforma resolve.
 
 ---
 
-## Padrões de agentes
+## Padrões de agents e quando cada um quebra
 
 ![Padrões de Agentes no Foundry](../assets/ch8-agent-patterns.svg)
 
-| Padrão              | Complexidade | Controle | Quando usar                          |
-|--------------------|--------------|----------|--------------------------------------|
-| **Single Agent**       | Baixa        | Alto     | Tarefas bem definidas                |
-| **Agent + Tools**      | Média        | Alto     | Maioria dos casos de negócio         |
-| **Multi-Agent**        | Alta         | Médio    | Processos complexos com especialização |
+| Padrão              | Complexidade | Controle | Quando funciona                        | Quando quebra                              |
+|--------------------|--------------|----------|----------------------------------------|--------------------------------------------|
+| Single Agent       | Baixa        | Alto     | Tarefa bem definida, poucos tools      | Precisa de especialização ou contexto longo |
+| Agent + Tools      | Média        | Alto     | Maioria dos casos de negócio            | Tools têm side-effects sem HITL            |
+| Multi-Agent        | Alta         | Médio    | Processo com etapas claramente separadas | Coordenação fica mais cara que o valor     |
 
-**Recomendação:** comece com Single Agent ou Agent + Tools. Só avance para Multi-Agent quando houver evidência clara de benefício.
+Comece com Single Agent ou Agent + Tools. Multi-Agent só vale quando você já mediu que um agent único não consegue manter qualidade ou que o custo de contexto está explodindo.
 
 ---
 
-## Decisões importantes do arquiteto
+## Foundry vs self-managed: o trade-off real
 
-### 1. Foundry vs Self-managed
-| Critério                     | Foundry                          | AKS + vLLM/SGLang               |
-|------------------------------|----------------------------------|---------------------------------|
-| Velocidade de entrega        | Alta                             | Média                           |
-| Controle fino                | Médio                            | Alto                            |
-| Operação                     | Menor                            | Maior                           |
-| Customização de inference    | Limitada                         | Total                           |
-| Custo em escala muito alta   | Pode ser maior                   | Potencialmente menor            |
+| Critério                     | Foundry                          | AKS + vLLM/SGLang                     |
+|------------------------------|----------------------------------|---------------------------------------|
+| Tempo até o primeiro agent   | Dias                             | Semanas                               |
+| Controle de inference        | Limitado                         | Total (quantização, batching, cache)  |
+| Operação de GPU              | Baixa                            | Alta                                  |
+| Custo em volume alto e estável| Pode ficar mais caro             | Costuma ficar menor                   |
+| Data residency / isolamento  | Depende da configuração           | Total                                 |
 
-### 2. Governança de tools
-- Quais tools o agent pode chamar?
-- Existe aprovação humana para ações críticas?
-- Como auditar as chamadas?
+Foundry ganha quando a equipe é pequena ou o volume ainda não justifica operar GPU. Self-managed ganha quando o custo por milhão de tokens ou o requisito de dados que não podem sair do perímetro passam a ser o problema principal.
 
-### 3. Observabilidade
-Mesmo em plataforma gerenciada, o arquiteto precisa de:
-- Custo por execução de agent
-- Número de steps
-- Taxa de falha de tools
-- Qualidade das respostas
+---
+
+## Governança que importa
+
+Três pontos que quebram agents em produção:
+
+1. Tools com side-effects sem aprovação humana.
+2. Ausência de limite de steps (o custo cresce sem teto).
+3. Falta de observabilidade do loop inteiro (não só do modelo).
+
+Mesmo no Foundry você precisa de custo por execução, número de steps, taxa de falha de tools e um caminho de fallback simples.
 
 ---
 
 ## Quando usar / quando não usar
 
-| Situação                              | Recomendação                          |
-|--------------------------------------|---------------------------------------|
-| Quer entregar rápido um agent         | Foundry                               |
-| Precisa de controle total de inference | AKS + engine open source            |
-| Mistura de modelos closed e open     | Foundry (ou híbrido)                   |
-| Requisitos muito específicos de rede  | Avaliar self-managed                  |
-| Equipe pequena                       | Foundry                               |
+| Situação                              | Recomendação                          | Motivo principal                     |
+|--------------------------------------|---------------------------------------|--------------------------------------|
+| Primeiro agent, equipe pequena       | Foundry                               | Velocidade de entrega                |
+| Volume alto e custo por token importa| AKS + engine open source              | Controle de utilization              |
+| Dados sensíveis que não podem sair    | Self-managed ou híbrido                | Data residency                       |
+| Precisa de fine-tuning profundo      | Avaliar self-managed                  | Foundry tem limites de customização    |
+| Requisitos de rede muito específicos  | Self-managed                          | Controle de isolamento               |
 
 ---
 
-## Checklist do capítulo
+## Checklist
 
-- [ ] Consigo explicar o que o Foundry abstrai e o que continua sendo minha responsabilidade?
-- [ ] Sei a diferença entre os principais padrões de agents?
-- [ ] Tenho critérios para decidir entre Foundry e self-managed?
-- [ ] Entendo como governar tools e side-effects?
-- [ ] Consigo desenhar um agent no Foundry com limites claros de custo e risco?
+- [ ] Sei o que o Foundry tira da minha mesa e o que continua sendo meu problema?
+- [ ] Tenho limite de steps e HITL definidos antes de colocar o agent em produção?
+- [ ] Consigo justificar Foundry vs self-managed com número de volume ou requisito de dados?
+- [ ] O custo por execução é observável?
+- [ ] Existe fallback simples se o loop de tools falhar?
 
 ---
 
-## O que vem a seguir
-
-No Capítulo 9 vamos falar de **Compute Patterns no Azure** (ND-series, AKS + vLLM/SGLang, CycleCloud/Slurm). É o capítulo que conecta as decisões de plataforma com as escolhas concretas de infraestrutura.
-
-Quer ajustes neste capítulo ou seguimos para o Capítulo 9?
+Próximo capítulo: Compute Patterns no Azure. É onde as decisões de plataforma encontram as escolhas concretas de SKU e orquestração.
