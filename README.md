@@ -1,49 +1,63 @@
-# AI Infrastructure for Architects
+# AI for Architects
 
-**System Design e Infraestrutura de AI para Arquitetos — sem precisar virar desenvolvedor.**
+**Handbook de System Design e Infraestrutura de AI para Arquitetos.**
 
-[![Stars](https://img.shields.io/github/stars/ricmmartins/ai-infrastructure-for-architects?style=social)](https://github.com/ricmmartins/ai-infrastructure-for-architects)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+> Material prático e de profundidade para arquitetos (Cloud, Solution, Enterprise) que precisam entender como sistemas de AI realmente funcionam e tomar decisões conscientes — sem precisar virar desenvolvedores.
 
-> Guia prático e de alto nível para arquitetos de infraestrutura que precisam conversar no mesmo nível de clientes avançados em AI (Perplexity, OpenAI-like, digital natives, etc.).
+Projeto irmão e complementar ao [AI for Infra Pros](https://www.ai4infra.com/).
 
-## Por que este repositório existe?
+## Para quem é este material
 
-A maioria dos materiais de AI Infra é escrito para engenheiros de ML ou desenvolvedores. Este material foi feito para **arquitetos de infraestrutura** que precisam entender:
+Arquitetos que trabalham com clientes avançados em AI (digital natives, empresas com training e inference em escala, agents, etc.) e precisam:
 
-- Como training, inference e agents realmente funcionam do ponto de vista de sistema
-- Quais são as trade-offs reais (latência, throughput, custo, resiliência)
-- Como mapear isso para Azure (Foundry, ND-series, AKS, CycleCloud, AI Search...)
-- Como desenhar e discutir arquiteturas com clientes de AI de ponta
-- **Quando e como usar AI local e open weights** (novo)
+- Entender trade-offs reais de latência, throughput, custo, resiliência e data residency
+- Conversar no mesmo nível desses clientes
+- Desenhar arquiteturas conscientes
+- Justificar decisões sem depender de hype
 
-## Conteúdo
+## Estrutura do Handbook
 
-- **[Guia principal](./guia-estudo.md)** — Training, Inference, Agents, RAG, Arquitetura Azure, Cases
-- **[Módulo: AI Local e Open Weights](./modulo-ai-local-open-weights.md)** — Visão de arquiteto sobre self-hosted, quantização, engines (vLLM, Ollama, llama.cpp) e trade-offs
+### Part I — Foundations for Architects
+1. [Por que AI é diferente](chapters/01-por-que-ai-e-diferente.md)
+2. [Training vs Inference vs Agents](chapters/02-training-vs-inference-vs-agents.md)
+3. [Compute, Memória e Conectividade](chapters/03-compute-memoria-conectividade.md)
 
-### Tópicos do guia principal
-1. Mental Model — Training vs Inference vs Agents
-2. Compute e Aceleradores
-3. Treinamento Distribuído
-4. Inferência em Escala
-5. RAG e Retrieval
-6. Agentes e Sistemas Agentic
-7. Arquitetura Azure para AI
-8. Custo, Observabilidade e FinOps
-9. Case Studies
-10. Glossário
+### Part II — Core Patterns
+4. [Inference em Escala](chapters/04-inference-em-escala.md)
+5. [RAG e Retrieval Architectures](chapters/05-rag-retrieval-architectures.md)
+6. [Agents e Sistemas Agentic](chapters/06-agents-sistemas-agentic.md)
+7. [Open Weights e AI Local](chapters/07-open-weights-ai-local.md)
+
+### Part III — Azure Architecture Patterns
+8. [Microsoft Foundry e Padrões de Agentes](chapters/08-microsoft-foundry-agentes.md)
+9. [Compute Patterns no Azure](chapters/09-compute-patterns-azure.md)
+10. [Networking, Storage e Data Patterns](chapters/10-networking-storage-data.md)
+11. [Landing Zones e Governança para AI](chapters/11-landing-zones-governanca.md)
+
+### Part IV — Decision Frameworks
+12. [Cost, FinOps e Observabilidade](chapters/12-cost-finops-observabilidade.md)
+13. [Security, Privacy e Compliance em AI](chapters/13-security-privacy-compliance.md)
+14. [Hybrid e Multi-pattern Architectures](chapters/14-hybrid-multi-pattern.md)
+
+### Part V — Practice
+15. [Case Studies Profundos](chapters/15-case-studies.md)
+16. [Decision Matrices e Checklists](chapters/16-decision-matrices-checklists.md)
+17. [Glossário Visual para Arquitetos](chapters/17-glossario-visual.md)
 
 ## Como usar
 
-- Comece pelo [guia principal](./guia-estudo.md)
-- Depois leia o [módulo de AI Local](./modulo-ai-local-open-weights.md)
-- Para cada conceito, pergunte: *qual o impacto em compute, rede, storage, latência e custo?*
-- Pratique os case studies explicando em voz alta
+1. Leia sequencialmente se estiver construindo base.
+2. Use as **Decision Matrices e Checklists** (Capítulo 16) no dia a dia.
+3. Para cada conceito, pergunte: *qual o impacto em compute, rede, storage, latência, custo e risco?*
+4. Pratique explicando os cases em voz alta.
+
+## Diagramas
+
+Todos os diagramas seguem o skill [svg-diagrams-skill](https://github.com/ricmmartins/svg-diagrams-skill) (paleta Azure-inspired, tipografia Segoe UI, rounded rectangles, acessíveis e responsivos).
 
 ## Contribua
 
-Pull requests com melhorias, novos cases, diagramas, traduções ou exemplos Azure são bem-vindos.
+Pull requests com melhorias, novos cases, diagramas, traduções ou exemplos são bem-vindos.
 
 ## Autor
 
