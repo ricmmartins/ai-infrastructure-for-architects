@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Mapa de Conceitos do Handbook</title>
+  <desc>Visão geral dos principais conceitos cobertos no AI for Architects.</desc>
+
+  <text x="360" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Mapa de Conceitos</text>
+
+  <rect x="40" y="70" width="150" height="60" rx="8" fill="#dae8fc" stroke="#6c8ebf"/>
+  <text x="115" y="105" text-anchor="middle" font-size="12" fill="#1a3a5c">Foundations</text>
+
+  <rect x="210" y="70" width="150" height="60" rx="8" fill="#d5e8d4" stroke="#82b366"/>
+  <text x="285" y="105" text-anchor="middle" font-size="12" fill="#2d5a1b">Core Patterns</text>
+
+  <rect x="380" y="70" width="150" height="60" rx="8" fill="#fff2cc" stroke="#d6b656"/>
+  <text x="455" y="105" text-anchor="middle" font-size="12" fill="#7a5900">Azure Patterns</text>
+
+  <rect x="550" y="70" width="130" height="60" rx="8" fill="#e1d5e7" stroke="#9673a6"/>
+  <text x="615" y="105" text-anchor="middle" font-size="12" fill="#5a3d6a">Decisions</text>
+
+  <text x="360" y="170" text-anchor="middle" font-size="13" fill="#333">Training · Inference · Agents · RAG · Open Weights</text>
+  <text x="360" y="195" text-anchor="middle" font-size="13" fill="#333">HBM · NVLink · Prefill/Decode · Continuous Batching</text>
+  <text x="360" y="220" text-anchor="middle" font-size="13" fill="#333">Foundry · AKS · ND-series · Landing Zones</text>
+  <text x="360" y="255" text-anchor="middle" font-size="12" fill="#555">O arquiteto decide com base em trade-offs, não em hype.</text>
+</svg>
