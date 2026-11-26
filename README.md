@@ -15,38 +15,35 @@ A maioria dos materiais de AI Infra é escrito para engenheiros de ML ou desenvo
 - Quais são as trade-offs reais (latência, throughput, custo, resiliência)
 - Como mapear isso para Azure (Foundry, ND-series, AKS, CycleCloud, AI Search...)
 - Como desenhar e discutir arquiteturas com clientes de AI de ponta
+- **Quando e como usar AI local e open weights** (novo)
 
 ## Conteúdo
 
-O guia principal está em [`guia-estudo.md`](./guia-estudo.md) e cobre:
+- **[Guia principal](./guia-estudo.md)** — Training, Inference, Agents, RAG, Arquitetura Azure, Cases
+- **[Módulo: AI Local e Open Weights](./modulo-ai-local-open-weights.md)** — Visão de arquiteto sobre self-hosted, quantização, engines (vLLM, Ollama, llama.cpp) e trade-offs
 
-1. **Mental Model** — Training vs Inference vs Agents
-2. **Compute e Aceleradores** — GPUs, NVLink, InfiniBand, scale-up vs scale-out
-3. **Treinamento Distribuído** — Paralelismo (DP/TP/PP/EP), ZeRO/FSDP, requisitos de rede e storage
-4. **Inferência em Escala** — Prefill/Decode, Continuous Batching, PagedAttention, Disaggregated Serving
-5. **RAG e Retrieval**
-6. **Agentes e Sistemas Agentic**
-7. **Arquitetura Azure para AI**
-8. **Custo, Observabilidade e FinOps**
-9. **Case Studies** (Perplexity-style, training 70B+, agente enterprise)
-10. **Glossário**
+### Tópicos do guia principal
+1. Mental Model — Training vs Inference vs Agents
+2. Compute e Aceleradores
+3. Treinamento Distribuído
+4. Inferência em Escala
+5. RAG e Retrieval
+6. Agentes e Sistemas Agentic
+7. Arquitetura Azure para AI
+8. Custo, Observabilidade e FinOps
+9. Case Studies
+10. Glossário
 
 ## Como usar
 
-- Leia o [guia completo](./guia-estudo.md)
+- Comece pelo [guia principal](./guia-estudo.md)
+- Depois leia o [módulo de AI Local](./modulo-ai-local-open-weights.md)
 - Para cada conceito, pergunte: *qual o impacto em compute, rede, storage, latência e custo?*
-- Pratique os case studies explicando em voz alta (como se estivesse com um cliente)
+- Pratique os case studies explicando em voz alta
 
 ## Contribua
 
-Este repositório é aberto. Pull requests com:
-- Melhorias no guia
-- Novos case studies
-- Diagramas
-- Traduções
-- Exemplos de arquitetura Azure
-
-são muito bem-vindos.
+Pull requests com melhorias, novos cases, diagramas, traduções ou exemplos Azure são bem-vindos.
 
 ## Autor
 
