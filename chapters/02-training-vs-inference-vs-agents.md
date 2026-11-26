@@ -1,87 +1,87 @@
-# Capítulo 2 — Training vs Inference vs Agents
+# Chapter 2 — Training vs Inference vs Agents
 
-Se você desenhar a arquitetura pensando só em inference, o training vai doer. Se desenhar só para training, o agent vai te falir.
-
----
-
-## O erro mais comum
-
-Tratar AI como “uma aplicação que usa GPU”. Isso gera arquiteturas que funcionam razoavelmente para um modo e quebram nos outros dois.
+If you design the architecture thinking only about inference, training will hurt. If you design only for training, the agent will bankrupt you.
 
 ---
 
-## Trade-offs de sistema
+## The most common mistake
 
-![Trade-offs de Sistema entre Training, Inference e Agents](../assets/ch2-system-tradeoffs.svg)
+Treating AI as “an application that uses GPUs.” This produces architectures that work reasonably for one mode and break in the other two.
 
-| Dimensão          | Training                          | Inference                              | Agents                                   |
+---
+
+## System trade-offs
+
+![System Trade-offs between Training, Inference and Agents](../assets/ch2-system-tradeoffs.svg)
+
+| Dimension         | Training                          | Inference                              | Agents                                   |
 |-------------------|-----------------------------------|----------------------------------------|------------------------------------------|
-| Padrão de carga   | Batch, longo, previsível            | Online, bursty, latência-sensível        | Multi-step, variável, side-effects         |
-| Compute           | Alto utilization, collective ops  | Prefill (compute-bound) + Decode (memory-bound) | Múltiplas chamadas de inference           |
-| Networking        | InfiniBand / NVLink críticos        | Baixa latência, alto throughput         | Chamadas a tools + APIs externas         |
-| Estado            | Checkpoints + optimizer state     | KV cache (sessão)                       | Memória de longo prazo + contexto        |
-| Tolerância a falha | Checkpoint e resume obrigatórios   | Retry e fallback de modelo             | Orquestração + human-in-the-loop        |
-| Modelo de custo   | GPU-hours                         | Custo por milhão de tokens               | Tokens × número de steps                  |
-| Escala            | Scale-up + scale-out              | Principalmente scale-out               | Orquestração e isolamento                |
+| Load pattern      | Batch, long, predictable          | Online, bursty, latency-sensitive      | Multi-step, variable, side-effects       |
+| Compute           | High utilization, collective ops  | Prefill (compute-bound) + Decode (memory-bound) | Multiple inference calls                 |
+| Networking        | InfiniBand / NVLink critical      | Low latency, high throughput           | Calls to tools + external APIs           |
+| State             | Checkpoints + optimizer state     | KV cache (session)                     | Long-term memory + context               |
+| Fault tolerance   | Checkpoint and resume mandatory   | Retry and model fallback               | Orchestration + human-in-the-loop        |
+| Cost model        | GPU-hours                         | Cost per million tokens                | Tokens × number of steps                |
+| Scale             | Scale-up + scale-out              | Mainly scale-out                       | Orchestration and isolation              |
 
 ---
 
 ## Training
 
-Job de batch em larga escala. O objetivo é maximizar utilization durante horas ou semanas.
+Large-scale batch job. The goal is to maximize utilization for hours or weeks.
 
-O arquiteto decide: número de GPUs por nó, interconexão (NVLink vs InfiniBand), estratégia de paralelismo e frequência de checkpoints. Rede de alta banda deixa de ser opcional. Storage precisa aguentar escrita massiva. O custo dominante é GPU-hour.
+The architect decides: number of GPUs per node, interconnect (NVLink vs InfiniBand), parallelism strategy and checkpoint frequency. High-bandwidth network stops being optional. Storage must handle massive writes. The dominant cost is GPU-hour.
 
 ---
 
 ## Inference
 
-Serviço online. Equilibrar TTFT e throughput.
+Online service. Balance TTFT and throughput.
 
-Prefill é compute-bound. Decode é memory-bound. Continuous batching aumenta throughput e pode aumentar latência. Disaggregated serving melhora os dois e adiciona complexidade de rede. O arquiteto decide engine, quantização e se a complexidade de disaggregated vale o ganho.
+Prefill is compute-bound. Decode is memory-bound. Continuous batching increases throughput and can increase latency. Disaggregated serving improves both and adds network complexity. The architect decides the engine, quantization and whether the complexity of disaggregated serving is worth the gain.
 
 ---
 
 ## Agents
 
-Não é “inference mais inteligente”. É um loop que faz múltiplas chamadas, chama tools e mantém estado.
+Not “smarter inference.” It is a loop that makes multiple calls, invokes tools and maintains state.
 
-Uma chamada de inference custa 1×. Um agent com 8 steps e 3 tools facilmente custa 10–20× em tokens e latência. O arquiteto decide onde orquestrar, quanto de memória de longo prazo é necessário, quando colocar human-in-the-loop e como isolar tools.
-
----
-
-## Framework de decisão
-
-![Framework de Decisão: Qual modo priorizar?](../assets/ch2-decision-framework.svg)
-
-1. O sistema precisa criar modelos novos ou só servir modelos existentes?
-2. A latência de resposta é crítica ou o throughput é mais importante?
-3. Existem side-effects?
-4. Qual é o orçamento de custo por interação aceitável?
-5. Os dados podem sair do perímetro?
+One inference call costs 1×. An agent with 8 steps and 3 tools easily costs 10–20× in tokens and latency. The architect decides where to orchestrate, how much long-term memory is needed, when to put human-in-the-loop and how to isolate tools.
 
 ---
 
-## Quando usar / quando não usar
+## Decision framework
 
-| Necessidade                          | Foco principal     | O que quebra se misturar errado          |
+![Decision Framework: Which mode to prioritize?](../assets/ch2-decision-framework.svg)
+
+1. Does the system need to create new models or only serve existing ones?
+2. Is response latency critical or is throughput more important?
+3. Are there side-effects?
+4. What is the acceptable cost budget per interaction?
+5. Can the data leave the perimeter?
+
+---
+
+## When to use / when not to use
+
+| Need                                 | Primary focus      | What breaks if mixed wrong               |
 |--------------------------------------|--------------------|------------------------------------------|
-| Treinar ou fine-tune modelo grande   | Training           | Mesmo cluster de inference: jobs longos competem com SLA |
-| API de chat com SLA de latência       | Inference          | Agent sem controle de steps: custo e latência explodem |
-| Processo multi-step com tools        | Agents             | Sem observabilidade de steps: não sabe por que o custo subiu |
-| Mistura de treinamento e serviço      | Separar clusters   | Um cluster “faz tudo”: nenhum dos dois fica bem |
-| Volume baixo, rápido time-to-market  | Inference gerenciada | Self-hosted complexo no início: operação sem retorno |
+| Train or fine-tune a large model     | Training           | Same inference cluster: long jobs compete with SLA |
+| Chat API with latency SLA            | Inference          | Agent without step control: cost and latency explode |
+| Multi-step process with tools        | Agents             | Without step observability: does not know why cost rose |
+| Mix of training and serving          | Separate clusters  | One “does everything” cluster: neither is good |
+| Low volume, fast time-to-market      | Managed inference  | Complex self-hosted at the start: operation without return |
 
 ---
 
 ## Checklist
 
-- [ ] Consigo explicar a diferença de networking entre training e inference?
-- [ ] Entendo por que disaggregated serving existe?
-- [ ] Sei estimar a amplificação de custo de um agent?
-- [ ] Tenho um framework para decidir se o sistema deve ser training-first, inference-first ou agent-first?
-- [ ] Consigo mapear esses trade-offs para decisões de Azure?
+- [ ] Can I explain the networking difference between training and inference?
+- [ ] Do I understand why disaggregated serving exists?
+- [ ] Can I estimate the cost amplification of an agent?
+- [ ] Do I have a framework to decide whether the system should be training-first, inference-first or agent-first?
+- [ ] Can I map these trade-offs to Azure decisions?
 
 ---
 
-Próximo: Compute, memória e conectividade. Onde os trade-offs de sistema encontram HBM, NVLink e InfiniBand.
+Next: Compute, memory and connectivity. Where system trade-offs meet HBM, NVLink and InfiniBand.
