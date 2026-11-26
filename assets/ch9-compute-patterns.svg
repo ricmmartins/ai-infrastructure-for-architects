@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Padrões de Compute no Azure para AI</title>
+  <desc>Três principais padrões de compute que o arquiteto considera para workloads de AI no Azure.</desc>
+
+  <text x="380" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Padrões de Compute no Azure</text>
+
+  <!-- Foundry / Managed -->
+  <rect x="30" y="70" width="220" height="240" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="140" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#1a3a5c">Gerenciado</text>
+  <text x="140" y="140" text-anchor="middle" font-size="12" fill="#333">Foundry</text>
+  <text x="140" y="165" text-anchor="middle" font-size="12" fill="#333">Azure OpenAI</text>
+  <text x="140" y="200" text-anchor="middle" font-size="11" fill="#555">Menor operação</text>
+  <text x="140" y="220" text-anchor="middle" font-size="11" fill="#555">Rápido de começar</text>
+  <text x="140" y="250" text-anchor="middle" font-size="11" fill="#555">Menos controle</text>
+
+  <!-- AKS -->
+  <rect x="270" y="70" width="220" height="240" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="380" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#2d5a1b">AKS + Engine</text>
+  <text x="380" y="140" text-anchor="middle" font-size="12" fill="#333">vLLM / SGLang</text>
+  <text x="380" y="165" text-anchor="middle" font-size="12" fill="#333">ND-series</text>
+  <text x="380" y="200" text-anchor="middle" font-size="11" fill="#555">Bom equilíbrio</text>
+  <text x="380" y="220" text-anchor="middle" font-size="11" fill="#555">Controle + Kubernetes</text>
+  <text x="380" y="250" text-anchor="middle" font-size="11" fill="#555">Padrão mais comum</text>
+
+  <!-- CycleCloud / Slurm -->
+  <rect x="510" y="70" width="220" height="240" rx="10" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="620" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#5a3d6a">HPC / Training</text>
+  <text x="620" y="140" text-anchor="middle" font-size="12" fill="#333">CycleCloud</text>
+  <text x="620" y="165" text-anchor="middle" font-size="12" fill="#333">Slurm</text>
+  <text x="620" y="200" text-anchor="middle" font-size="11" fill="#555">Jobs longos</text>
+  <text x="620" y="220" text-anchor="middle" font-size="11" fill="#555">Multi-node training</text>
+  <text x="620" y="250" text-anchor="middle" font-size="11" fill="#555">Maior complexidade</text>
+</svg>
