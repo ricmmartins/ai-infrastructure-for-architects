@@ -1,20 +1,12 @@
 # Capítulo 14 — Hybrid e Multi-pattern Architectures
-## Como combinar padrões em sistemas reais
 
-> “Arquiteturas reais raramente usam um único padrão. Elas combinam vários, e o arquiteto precisa saber onde colocar as fronteiras.”
+Arquiteturas reais raramente usam um único padrão. Elas combinam vários. O trabalho do arquiteto é definir onde cada padrão começa e termina, e o que acontece na fronteira.
 
 ---
 
-## Por que padrões híbridos
+## Por que híbridos aparecem
 
-Até aqui vimos padrões de forma isolada. Na prática, sistemas de produção misturam:
-
-- Modelos fechados e open weights
-- RAG e agents
-- Serviços gerenciados e self-hosted
-- Diferentes estratégias de inference
-
-O trabalho do arquiteto é definir **onde** cada padrão é usado e **como** eles se comunicam.
+Sistemas de produção misturam modelos fechados e open weights, RAG e agents, serviços gerenciados e self-hosted. Cada combinação resolve um problema e cria outro. O erro comum é espalhar a lógica de decisão por todo o sistema em vez de concentrá-la.
 
 ---
 
@@ -22,72 +14,64 @@ O trabalho do arquiteto é definir **onde** cada padrão é usado e **como** ele
 
 ![Padrões Híbridos Comuns](../assets/ch14-hybrid-patterns.svg)
 
-| Padrão Híbrido          | Quando usar                              | Principal benefício               |
-|------------------------|------------------------------------------|----------------------------------|
-| **Closed + Open**          | Volume alto + necessidade de qualidade   | Otimização de custo             |
-| **RAG + Agent**            | Tarefas que precisam de dados + ação    | Maior capacidade                 |
-| **Managed + Self-hosted**  | Transição gradual ou controle seletivo  | Equilíbrio operação/controle    |
-| **Prefill/Decode split**   | Clusters grandes de inference            | Melhor utilization               |
+| Padrão Híbrido          | Quando usar                              | Benefício principal               | Quando não vale a pena                |
+|------------------------|------------------------------------------|----------------------------------|----------------------------------------|
+| Closed + Open          | Volume alto + qualidade em casos difíceis| Custo otimizado                  | Volume baixo ou equipe pequena         |
+| RAG + Agent            | Tarefas que precisam de dados e ação    | Capacidade maior                 | Tarefa simples que inference resolve   |
+| Managed + Self-hosted  | Transição ou controle seletivo          | Equilíbrio operação/controle     | Sem critério claro de roteamento       |
+| Prefill/Decode split   | Clusters grandes de inference            | Utilization melhor               | Clusters pequenos                      |
+
+A maioria dos híbridos só se justifica depois que você mediu o problema que o padrão simples não resolve.
 
 ---
 
-## Composição de padrões
+## O router como fronteira
 
 ![Composição de Padrões](../assets/ch14-composition.svg)
 
-Um **router** (ou camada de orquestração) é frequentemente o ponto onde as decisões de padrão acontecem:
+Um router (ou camada de orquestração) é o lugar onde a maioria das decisões de padrão deve acontecer:
 
 - Qual modelo usar?
 - Precisa de RAG?
 - Deve ir para um agent?
 - Qual pool de inference?
 
-Concentrar essa lógica evita espalhar complexidade por todo o sistema.
+Concentrar a lógica ali evita que cada serviço invente sua própria regra. Também facilita medir custo, latência e qualidade por caminho.
 
 ---
 
-## Princípios para arquiteturas híbridas
+## Princípios que evitam complexidade desnecessária
 
-1. **Fronteiras claras**  
-   Cada padrão deve ter responsabilidade bem definida.
+Fronteiras claras. Cada padrão tem responsabilidade definida. Se não consegue explicar em uma frase o que aquele caminho faz, ele provavelmente está fazendo demais.
 
-2. **Observabilidade na fronteira**  
-   Meça custo, latência e qualidade em cada caminho.
+Observabilidade na fronteira. Meça custo, latência e qualidade em cada caminho. Sem isso você não sabe se o híbrido está ganhando ou só adicionando operação.
 
-3. **Fallback**  
-   Tenha um caminho simples quando o caminho complexo falhar.
+Fallback. Tenha um caminho simples quando o caminho complexo falhar. Agents e routers complexos falham. O sistema precisa continuar funcionando.
 
-4. **Evolução gradual**  
-   Comece simples e adicione padrões conforme a necessidade for comprovada.
+Evolução gradual. Comece simples. Adicione o próximo padrão só quando houver evidência de que o atual não resolve.
 
 ---
 
 ## Quando usar / quando não usar
 
-| Situação                              | Abordagem                             |
-|--------------------------------------|---------------------------------------|
-| Necessidade de otimizar custo        | Closed + Open com router              |
-| Tarefas complexas com dados          | RAG + Agent                           |
-| Equipe em transição                    | Managed + Self-hosted                 |
-| Sistema ainda pequeno                | Evite híbridos desnecessários           |
-| Requisitos muito diferentes por request | Router bem definido                 |
+| Situação                              | Abordagem                             | Motivo principal                  |
+|--------------------------------------|---------------------------------------|-----------------------------------|
+| Otimizar custo em volume alto        | Closed + Open com router              | Break-even mensurável             |
+| Tarefas complexas com dados          | RAG + Agent                           | Capacidade                        |
+| Equipe em transição                    | Managed + Self-hosted                 | Risco controlado                  |
+| Sistema ainda pequeno                | Evite híbridos                        | Complexidade prematura            |
+| Requisitos muito diferentes por request | Router bem definido                 | Decisão centralizada              |
 
 ---
 
-## Checklist do capítulo
+## Checklist
 
-- [ ] Consigo identificar quando um sistema precisa de mais de um padrão?
-- [ ] Sei onde colocar a lógica de roteamento?
-- [ ] Entendo os principais padrões híbridos e seus trade-offs?
-- [ ] Tenho princípios para evitar complexidade desnecessária?
-- [ ] Consigo desenhar uma arquitetura que evolui de simples para híbrida?
+- [ ] Consigo identificar quando um sistema realmente precisa de mais de um padrão?
+- [ ] A lógica de roteamento está concentrada ou espalhada?
+- [ ] Cada caminho tem observabilidade de custo e qualidade?
+- [ ] Existe fallback simples?
+- [ ] Consigo explicar por que o híbrido é necessário e não só interessante?
 
 ---
 
-## O que vem a seguir
-
-Com o Capítulo 14 fechamos a **Part IV — Decision Frameworks**.
-
-No Capítulo 15 entramos na **Part V — Practice**, começando pelos **Case Studies Profundos**.
-
-Quer ajustes neste capítulo ou seguimos para o Capítulo 15?
+Com este capítulo fechamos a Part IV. Próximo: Case Studies. É onde os padrões se encontram com restrições reais.
