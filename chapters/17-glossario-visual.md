@@ -1,7 +1,6 @@
 # Capítulo 17 — Glossário Visual para Arquitetos
-## Conceitos-chave consolidados
 
-> “Se você consegue explicar estes conceitos com clareza, consegue conversar de igual para igual com clientes avançados.”
+Se você consegue explicar estes conceitos com clareza, consegue conversar de igual para igual com clientes avançados.
 
 ---
 
@@ -15,22 +14,22 @@
 
 | Termo                    | Definição para o arquiteto                                      | Capítulo |
 |--------------------------|----------------------------------------------------------------|---------|
-| **Prefill**                  | Fase que processa o prompt inteiro (compute-bound)             | 4       |
-| **Decode**                   | Fase que gera tokens um a um (memory-bound)                    | 4       |
-| **Continuous Batching**      | Adiciona e remove requests dinamicamente para melhor utilization | 4     |
-| **PagedAttention**           | Gerencia KV cache como páginas de memória                      | 4       |
-| **Disaggregated Serving**    | Separa pools de Prefill e Decode                               | 4       |
-| **HBM**                      | High Bandwidth Memory — recurso mais escasso em inference     | 3       |
-| **NVLink**                   | Interconexão de alta banda dentro do nó (scale-up)            | 3       |
-| **InfiniBand**               | Rede de baixa latência entre nós (scale-out)                  | 3       |
-| **KV Cache**                 | Memória que armazena o estado do contexto durante a geração  | 3, 4    |
-| **RAG**                      | Retrieval-Augmented Generation                                 | 5       |
-| **Agent**                    | Sistema que executa um loop de perception-planning-action      | 6       |
-| **Open Weights**             | Modelos cujos pesos são publicamente disponíveis               | 7       |
-| **Quantização**             | Redução da precisão dos pesos para economizar memória          | 7       |
-| **TTFT**                     | Time to First Token                                            | 4       |
-| **HITL**                     | Human-in-the-Loop                                              | 6, 13   |
-| **Landing Zone**             | Estrutura base de governança e plataforma no Azure            | 11      |
+| Prefill                  | Fase que processa o prompt inteiro (compute-bound)             | 4       |
+| Decode                   | Fase que gera tokens um a um (memory-bound)                    | 4       |
+| Continuous Batching      | Adiciona e remove requests dinamicamente para melhor utilization | 4     |
+| PagedAttention           | Gerencia KV cache como páginas de memória                      | 4       |
+| Disaggregated Serving    | Separa pools de Prefill e Decode                               | 4       |
+| HBM                      | High Bandwidth Memory — recurso mais escasso em inference     | 3       |
+| NVLink                   | Interconexão de alta banda dentro do nó (scale-up)            | 3       |
+| InfiniBand               | Rede de baixa latência entre nós (scale-out)                  | 3       |
+| KV Cache                 | Memória que armazena o estado do contexto durante a geração  | 3, 4    |
+| RAG                      | Retrieval-Augmented Generation                                 | 5       |
+| Agent                    | Sistema que executa um loop de perception-planning-action      | 6       |
+| Open Weights             | Modelos cujos pesos são publicamente disponíveis               | 7       |
+| Quantização             | Redução da precisão dos pesos para economizar memória          | 7       |
+| TTFT                     | Time to First Token                                            | 4       |
+| HITL                     | Human-in-the-Loop                                              | 6, 13   |
+| Landing Zone             | Estrutura base de governança e plataforma no Azure            | 11      |
 
 ---
 
@@ -49,19 +48,20 @@
 
 ## Encerramento
 
-Este handbook foi construído para arquitetos que precisam entender como sistemas de AI realmente funcionam e tomar decisões conscientes — sem precisar se tornar desenvolvedores ou operadores.
+Este handbook foi construído para arquitetos que precisam entender como sistemas de AI realmente funcionam e tomar decisões conscientes, sem precisar se tornar desenvolvedores ou operadores.
 
-Os capítulos anteriores deram profundidade.  
-Este glossário serve como referência rápida.
+Os capítulos anteriores deram profundidade. Este glossário serve como referência rápida.
 
-**O objetivo foi atingido se você conseguir:**
+O objetivo foi atingido se você conseguir:
 - Conversar no mesmo nível de clientes avançados
 - Justificar decisões de arquitetura com trade-offs claros
 - Evitar complexidade desnecessária
 - Desenhar sistemas que equilibram capacidade, custo e risco
 
+Para a parte operacional (deployment, troubleshooting, GPU, IaC, monitoramento), veja o projeto irmão [AI for Infra Pros](https://www.ai4infra.com/).
+
 ---
 
-**Fim do Handbook — AI for Architects**
+Fim do Handbook — AI for Architects
 
 Repositório: https://github.com/ricmmartins/ai-infrastructure-for-architects
