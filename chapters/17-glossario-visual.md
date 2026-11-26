@@ -1,67 +1,67 @@
-# Capítulo 17 — Glossário Visual para Arquitetos
+# Chapter 17 — Visual Glossary for Architects
 
-Se você consegue explicar estes conceitos com clareza, consegue conversar de igual para igual com clientes avançados.
-
----
-
-## Mapa do Handbook
-
-![Mapa de Conceitos do Handbook](../assets/ch17-glossary-overview.svg)
+If you can explain these concepts clearly, you can talk at the same level as advanced clients.
 
 ---
 
-## Glossário
+## Handbook Map
 
-| Termo                    | Definição para o arquiteto                                      | Capítulo |
+![Handbook Concept Map](../assets/ch17-glossary-overview.svg)
+
+---
+
+## Glossary
+
+| Term                     | Definition for the architect                                    | Chapter |
 |--------------------------|----------------------------------------------------------------|---------|
-| Prefill                  | Fase que processa o prompt inteiro (compute-bound)             | 4       |
-| Decode                   | Fase que gera tokens um a um (memory-bound)                    | 4       |
-| Continuous Batching      | Adiciona e remove requests dinamicamente para melhor utilization | 4     |
-| PagedAttention           | Gerencia KV cache como páginas de memória                      | 4       |
-| Disaggregated Serving    | Separa pools de Prefill e Decode                               | 4       |
-| HBM                      | High Bandwidth Memory — recurso mais escasso em inference     | 3       |
-| NVLink                   | Interconexão de alta banda dentro do nó (scale-up)            | 3       |
-| InfiniBand               | Rede de baixa latência entre nós (scale-out)                  | 3       |
-| KV Cache                 | Memória que armazena o estado do contexto durante a geração  | 3, 4    |
+| Prefill                  | Phase that processes the entire prompt (compute-bound)         | 4       |
+| Decode                   | Phase that generates tokens one by one (memory-bound)          | 4       |
+| Continuous Batching      | Dynamically adds and removes requests for better utilization   | 4       |
+| PagedAttention           | Manages KV cache like memory pages                             | 4       |
+| Disaggregated Serving    | Separates Prefill and Decode pools                             | 4       |
+| HBM                      | High Bandwidth Memory — scarcest resource in inference       | 3       |
+| NVLink                   | High-bandwidth interconnect inside the node (scale-up)         | 3       |
+| InfiniBand               | Low-latency network between nodes (scale-out)                  | 3       |
+| KV Cache                 | Memory that stores the context state during generation         | 3, 4    |
 | RAG                      | Retrieval-Augmented Generation                                 | 5       |
-| Agent                    | Sistema que executa um loop de perception-planning-action      | 6       |
-| Open Weights             | Modelos cujos pesos são publicamente disponíveis               | 7       |
-| Quantização             | Redução da precisão dos pesos para economizar memória          | 7       |
+| Agent                    | System that executes a perception-planning-action loop         | 6       |
+| Open Weights             | Models whose weights are publicly available                    | 7       |
+| Quantization             | Reduction of weight precision to save memory                   | 7       |
 | TTFT                     | Time to First Token                                            | 4       |
 | HITL                     | Human-in-the-Loop                                              | 6, 13   |
-| Landing Zone             | Estrutura base de governança e plataforma no Azure            | 11      |
+| Landing Zone             | Base structure of governance and platform on Azure             | 11      |
 
 ---
 
-## Perguntas que o arquiteto deve saber responder
+## Questions the architect should be able to answer
 
-1. Qual a diferença entre Prefill e Decode e por que isso importa?
-2. Quando faz sentido usar disaggregated serving?
-3. Por que HBM é o recurso mais crítico em inference?
-4. Quando um agent se justifica e como controlar seu custo?
-5. Em que situações open weights são a escolha correta?
-6. Como desenhar uma arquitetura híbrida sem criar complexidade desnecessária?
-7. Quais são os principais drivers de custo de um sistema de AI?
-8. Como tratar data residency em uma arquitetura de AI?
-
----
-
-## Encerramento
-
-Este handbook foi construído para arquitetos que precisam entender como sistemas de AI realmente funcionam e tomar decisões conscientes, sem precisar se tornar desenvolvedores ou operadores.
-
-Os capítulos anteriores deram profundidade. Este glossário serve como referência rápida.
-
-O objetivo foi atingido se você conseguir:
-- Conversar no mesmo nível de clientes avançados
-- Justificar decisões de arquitetura com trade-offs claros
-- Evitar complexidade desnecessária
-- Desenhar sistemas que equilibram capacidade, custo e risco
-
-Para a parte operacional (deployment, troubleshooting, GPU, IaC, monitoramento), veja o projeto irmão [AI for Infra Pros](https://www.ai4infra.com/).
+1. What is the difference between Prefill and Decode and why does it matter?
+2. When does disaggregated serving make sense?
+3. Why is HBM the most critical resource in inference?
+4. When is an agent justified and how to control its cost?
+5. In which situations are open weights the right choice?
+6. How to design a hybrid architecture without creating unnecessary complexity?
+7. What are the main cost drivers of an AI system?
+8. How to handle data residency in an AI architecture?
 
 ---
 
-Fim do Handbook — AI for Architects
+## Closing
 
-Repositório: https://github.com/ricmmartins/ai-infrastructure-for-architects
+This handbook was built for architects who need to understand how AI systems actually work and make conscious decisions, without needing to become developers or operators.
+
+The previous chapters gave depth. This glossary serves as a quick reference.
+
+The goal was achieved if you can:
+- Talk at the same level as advanced clients
+- Justify architecture decisions with clear trade-offs
+- Avoid unnecessary complexity
+- Design systems that balance capability, cost and risk
+
+For the operational side (deployment, troubleshooting, GPU, IaC, monitoring), see the sibling project [AI for Infra Pros](https://www.ai4infra.com/).
+
+---
+
+End of the Handbook — AI for Architects
+
+Repository: https://github.com/ricmmartins/ai-infrastructure-for-architects
