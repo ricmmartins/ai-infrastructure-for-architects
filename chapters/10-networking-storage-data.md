@@ -1,79 +1,79 @@
-# Capítulo 10 — Networking, Storage e Data Patterns
+# Chapter 10 — Networking, Storage and Data Patterns
 
-Em AI, rede e storage deixam de ser commodity. Eles determinam se o training termina a tempo, se o RAG cabe no SLA de latência e se o custo de dados explode.
-
----
-
-## Por que muda o jogo
-
-Em workloads tradicionais você dimensiona rede e storage depois. Em AI eles entram no design desde o início porque:
-
-- Training distribuído é limitado por bandwidth entre GPUs.
-- RAG adiciona latência de retrieval que compete com o tempo de geração.
-- Checkpoints grandes e frequentes viram custo e risco de retomada.
+In AI, network and storage stop being commodities. They determine whether training finishes on time, whether RAG fits the latency SLA and whether data cost explodes.
 
 ---
 
-## Padrões de dados
+## Why it changes the game
 
-![Padrões de Dados para AI](../assets/ch10-data-patterns.svg)
+In traditional workloads you size network and storage later. In AI they enter the design from the start because:
 
-| Tipo de dado         | Característica                    | Serviço típico                  | O que quebra se errar              |
+- Distributed training is limited by bandwidth between GPUs.
+- RAG adds retrieval latency that competes with generation time.
+- Large and frequent checkpoints become cost and resume risk.
+
+---
+
+## Data patterns
+
+![Data Patterns for AI](../assets/ch10-data-patterns.svg)
+
+| Data type            | Characteristic                    | Typical service                 | What breaks if wrong               |
 |----------------------|---------------------------------|---------------------------------|------------------------------------|
-| Training data        | Alto volume, alto throughput    | Blob / ADLS                     | Job lento ou custo de egresso     |
-| Checkpoints          | Escrita grande e frequente      | Blob                            | Perda de progresso ou custo alto  |
-| Vector / RAG         | Baixa latência de busca           | Azure AI Search                 | Latência total acima do SLA        |
-| Model artifacts      | Versionamento e rollback        | Blob + tags                     | Deploy que não reverte             |
+| Training data        | High volume, high throughput    | Blob / ADLS                     | Slow job or egress cost            |
+| Checkpoints          | Large and frequent writes       | Blob                            | Loss of progress or high cost      |
+| Vector / RAG         | Low search latency              | Azure AI Search                 | Total latency above SLA            |
+| Model artifacts      | Versioning and rollback         | Blob + tags                     | Deploy that does not roll back     |
 
-Defina lifecycle de checkpoints desde o primeiro job. Sem isso o storage cresce sem controle.
+Define checkpoint lifecycle from the first job. Without it storage grows without control.
 
 ---
 
-## Rede por modo
+## Network by mode
 
-![Considerações de Rede para AI](../assets/ch10-network-considerations.svg)
+![Network Considerations for AI](../assets/ch10-network-considerations.svg)
 
-| Modo          | Requisito real                     | Decisão típica                     | Quando exagera                      |
+| Mode          | Real requirement                   | Typical decision                   | When it overdoes                   |
 |---------------|------------------------------------|-------------------------------------|-------------------------------------|
-| Training      | Bandwidth alta + baixa latência    | InfiniBand                          | Clusters pequenos ou inference      |
-| Inference     | Latência para o usuário            | Private Link + proximidade          | InfiniBand                          |
-| RAG           | Latência para o vector store        | Co-localização quando possível       | Vector store em outra região         |
-| Agents        | Chamadas a múltiplos sistemas        | Observabilidade e governança         | Rede aberta sem controle            |
+| Training      | High bandwidth + low latency       | InfiniBand                          | Small clusters or inference        |
+| Inference     | Latency to the user                | Private Link + proximity            | InfiniBand                          |
+| RAG           | Latency to the vector store        | Co-location when possible           | Vector store in another region     |
+| Agents        | Calls to multiple systems          | Observability and governance        | Open network without control       |
 
-InfiniBand para inference é o erro mais comum. O custo sobe e o ganho de latência é desprezível comparado com o tempo de decode.
-
----
-
-## Decisões que importam
-
-Onde colocar o vector store de RAG? Perto do modelo reduz latência. Em serviço gerenciado reduz operação. A escolha depende do SLA e do volume. Em volume baixo, gerenciado quase sempre ganha.
-
-Para training, prefira leitura direta de Blob/ADLS. Copiar dados para o cluster antes do job adiciona tempo e custo sem benefício claro na maioria dos casos.
-
-Private Endpoints para Storage, AI Search e Foundry são o padrão em ambientes enterprise. Exposição pública desnecessária cria risco sem ganho de performance.
+InfiniBand for inference is the most common mistake. Cost goes up and the latency gain is negligible compared to decode time.
 
 ---
 
-## Quando usar / quando não usar
+## Decisions that matter
 
-| Situação                              | Recomendação                          | Motivo principal                  |
+Where to place the RAG vector store? Close to the model reduces latency. In a managed service it reduces operations. The choice depends on SLA and volume. At low volume, managed almost always wins.
+
+For training, prefer direct reads from Blob/ADLS. Copying data to the cluster before the job adds time and cost without clear benefit in most cases.
+
+Private Endpoints for Storage, AI Search and Foundry are the standard in enterprise environments. Unnecessary public exposure creates risk without performance gain.
+
+---
+
+## When to use / when not to use
+
+| Situation                             | Recommendation                        | Main reason                       |
 |--------------------------------------|---------------------------------------|-----------------------------------|
-| Training em larga escala             | InfiniBand + Blob de alto throughput  | Bandwidth entre nós               |
-| RAG com SLA agressivo de latência    | Vector store co-localizado            | Reduzir round-trip                |
-| Dados sensíveis                       | Private Endpoints                     | Isolamento                        |
-| Volume baixo de RAG                  | Serviço gerenciado                    | Menos operação                    |
-| Muitos checkpoints                   | Lifecycle agressiva                   | Controle de custo                 |
+| Large-scale training                 | InfiniBand + high-throughput Blob     | Bandwidth between nodes           |
+| RAG with aggressive latency SLA      | Co-located vector store               | Reduce round-trip                 |
+| Sensitive data                       | Private Endpoints                     | Isolation                         |
+| Low volume RAG                       | Managed service                       | Less operations                   |
+| Many checkpoints                     | Aggressive lifecycle                  | Cost control                      |
 
 ---
 
 ## Checklist
 
-- [ ] Sei por que InfiniBand quase nunca vale para inference?
-- [ ] Tenho lifecycle definida para checkpoints?
-- [ ] Consigo explicar o impacto de latência do vector store no RAG?
-- [ ] Private Endpoints são o padrão ou ainda estão como exceção?
-- [ ] Consigo estimar se o storage vai ser um custo relevante?
+- [ ] Do I know why InfiniBand is almost never worth it for inference?
+- [ ] Do I have a lifecycle defined for checkpoints?
+- [ ] Can I explain the latency impact of the vector store on RAG?
+- [ ] Are Private Endpoints the standard or still an exception?
+- [ ] Can I estimate whether storage will be a relevant cost?
 
 ---
 
-Próximo capítulo: Landing Zones e Governança. A base que impede que cada time invente a sua própria forma de fazer a mesma coisa.
+Next chapter: Landing Zones and Governance. The foundation that prevents each team from inventing its own way of doing the same thing.
