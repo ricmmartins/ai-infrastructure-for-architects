@@ -1,68 +1,68 @@
-# Capítulo 5 — RAG e Retrieval Architectures
+# Chapter 5 — RAG and Retrieval Architectures
 
-RAG não é um banco de vetores com um LLM na frente. É a decisão de onde colocar a verdade e quanto de latência você aceita para isso.
-
----
-
-## Por que existe
-
-Modelos têm conhecimento congelado no treinamento. RAG traz informação externa no momento da geração. Para o arquiteto isso é um trade-off de latência, frescor, custo e precisão.
+RAG is not a vector database with an LLM in front of it. It is the decision of where to put the truth and how much latency you accept for that.
 
 ---
 
-## Fluxo
+## Why it exists
 
-![Fluxo básico de RAG](../assets/ch5-rag-flow.svg)
-
-Query chega, retrieval busca documentos, documentos entram no contexto, modelo gera. O retrieval está no caminho de latência. Cada milissegundo na busca é milissegundo que o usuário espera.
+Models have knowledge frozen at training time. RAG brings external information at generation time. For the architect this is a trade-off of latency, freshness, cost and precision.
 
 ---
 
-## Padrões
+## Flow
 
-![Padrões de RAG](../assets/ch5-rag-patterns.svg)
+![Basic RAG flow](../assets/ch5-rag-flow.svg)
 
-| Padrão              | Complexidade | Latência   | Precisão     | Quando usar                          | Quando não usar                     |
-|--------------------|--------------|-----------|-------------|--------------------------------------|-------------------------------------|
-| RAG Simples        | Baixa        | Baixa     | Média       | Conhecimento estático, FAQs          | Queries que precisam de precisão alta |
-| Hybrid Search      | Média        | Média     | Alta        | Maioria dos casos de produção        | Volume baixo onde simples basta     |
-| Agentic RAG        | Alta         | Alta      | Muito alta  | Queries complexas, multi-hop         | SLA agressivo de latência            |
-| Graph RAG          | Alta         | Média-Alta| Alta        | Dados com relacionamentos fortes     | Dados sem estrutura de grafo        |
+Query arrives, retrieval fetches documents, documents enter the context, model generates. Retrieval is on the latency path. Every millisecond in the search is a millisecond the user waits.
 
 ---
 
-## Decisões
+## Patterns
 
-Onde vive o índice? Managed (Azure AI Search) reduz operação e cobra por query. Self-hosted dá controle e adiciona operação. Em volume baixo, managed quase sempre ganha.
+![RAG patterns](../assets/ch5-rag-patterns.svg)
 
-Estratégia de retrieval: vector puro é rápido e perde matches exatos. Hybrid melhora precisão na maioria dos casos. Reranking aumenta precisão e adiciona 100–300 ms.
-
-Frescor: dados quase estáticos aceitam reindexação periódica. Dados que mudam com frequência precisam de indexação incremental. Dados em tempo real raramente cabem em RAG tradicional sem cache curto.
-
-Cada retrieval adiciona tipicamente 50–200 ms. Agentic RAG pode multiplicar o número de retrievals e a latência.
+| Pattern             | Complexity | Latency    | Precision    | When to use                          | When not to use                     |
+|---------------------|------------|------------|--------------|--------------------------------------|-------------------------------------|
+| Simple RAG          | Low        | Low        | Medium       | Static knowledge, FAQs               | Queries that need high precision    |
+| Hybrid Search       | Medium     | Medium     | High         | Most production cases                | Low volume where simple is enough   |
+| Agentic RAG         | High       | High       | Very high    | Complex queries, multi-hop           | Aggressive latency SLA              |
+| Graph RAG           | High       | Medium-High| High         | Data with strong relationships       | Data without graph structure        |
 
 ---
 
-## Quando usar / quando não usar
+## Decisions
 
-| Situação                              | Recomendação                          | O que quebra se errar                     |
+Where does the index live? Managed (Azure AI Search) reduces operations and charges per query. Self-hosted gives control and adds operations. At low volume, managed almost always wins.
+
+Retrieval strategy: pure vector is fast and misses exact matches. Hybrid improves precision in most cases. Reranking increases precision and adds 100–300 ms.
+
+Freshness: nearly static data accepts periodic reindexing. Data that changes frequently needs incremental indexing. Real-time data rarely fits traditional RAG without short cache.
+
+Each retrieval typically adds 50–200 ms. Agentic RAG can multiply the number of retrievals and the latency.
+
+---
+
+## When to use / when not to use
+
+| Situation                             | Recommendation                        | What breaks if wrong                      |
 |--------------------------------------|---------------------------------------|-------------------------------------------|
-| Conhecimento interno da empresa      | RAG Hybrid                            | Só fine-tuning: dados ficam desatualizados |
-| Dados que mudam constantemente       | RAG com indexação incremental         | Fine-tuning: lento demais                 |
-| Necessidade de citação de fontes      | RAG                                   | Sem RAG: modelo inventa fonte             |
-| Tarefa puramente generativa          | Sem RAG                               | RAG: latência desnecessária               |
-| Volume muito alto + dados estáticos  | Avaliar fine-tuning ou cache          | RAG puro: custo por query sobe            |
+| Internal company knowledge           | Hybrid RAG                            | Fine-tuning only: data becomes outdated   |
+| Data that changes constantly         | RAG with incremental indexing         | Fine-tuning: too slow                     |
+| Need for source citation             | RAG                                   | Without RAG: model invents the source     |
+| Purely generative task               | No RAG                                | RAG: unnecessary latency                  |
+| Very high volume + static data       | Evaluate fine-tuning or cache         | Pure RAG: cost per query rises            |
 
 ---
 
 ## Checklist
 
-- [ ] Consigo explicar por que RAG coloca latência no caminho crítico?
-- [ ] Sei a diferença entre RAG simples, hybrid e agentic?
-- [ ] Tenho critério para decidir entre managed e self-hosted?
-- [ ] Entendo o trade-off entre frescor dos dados e complexidade de indexação?
-- [ ] Consigo mapear uma arquitetura RAG para Azure?
+- [ ] Can I explain why RAG puts latency on the critical path?
+- [ ] Do I know the difference between simple, hybrid and agentic RAG?
+- [ ] Do I have a criterion to decide between managed and self-hosted?
+- [ ] Do I understand the trade-off between data freshness and indexing complexity?
+- [ ] Can I map a RAG architecture to Azure?
 
 ---
 
-Próximo: Agents e Sistemas Agentic. Onde o sistema deixa de só responder e passa a agir.
+Next: Agents and Agentic Systems. Where the system stops only answering and starts acting.
