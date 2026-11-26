@@ -1,106 +1,104 @@
-# Capítulo 16 — Decision Matrices e Checklists
-## Ferramentas prontas para o dia a dia do arquiteto
+# Chapter 16 — Decision Matrices and Checklists
+## Ready-to-use tools for the architect's daily work
 
-> “O valor deste handbook está em ajudar você a tomar decisões melhores, mais rápido.”
-
----
-
-## Como usar este capítulo
-
-As matrizes e checklists abaixo consolidam o conteúdo dos capítulos anteriores. Use-as como ponto de partida em reuniões de design, reviews de arquitetura ou quando precisar justificar uma decisão.
+> “The value of this handbook is in helping you make better decisions, faster.”
 
 ---
 
-## Matriz de Modo
+## How to use this chapter
 
-![Matriz de Decisão de Modo](../assets/ch16-mode-decision.svg)
-
-| Necessidade                          | Modo recomendado     | Complexidade | Custo relativo |
-|--------------------------------------|----------------------|--------------|----------------|
-| Resposta única, sem estado            | Inference simples    | Baixa        | 1×             |
-| Precisa de dados externos atualizados| RAG                  | Média        | 1.5–3×         |
-| Múltiplos passos ou ações            | Agent (com limites)  | Alta         | 5–20×          |
-| Combinação de dados + ação          | Agent + RAG          | Alta         | 8–25×          |
+The matrices and checklists below consolidate the content of the previous chapters. Use them as a starting point in design meetings, architecture reviews or when you need to justify a decision.
 
 ---
 
-## Matriz de Compute
+## Mode Matrix
 
-| Cenário                              | Padrão recomendado          | Observação                     |
+![Mode Decision Matrix](../assets/ch16-mode-decision.svg)
+
+| Need                                 | Recommended mode     | Complexity | Relative cost |
+|--------------------------------------|----------------------|------------|---------------|
+| Single response, no state            | Simple inference     | Low        | 1×            |
+| Needs updated external data          | RAG                  | Medium     | 1.5–3×       |
+| Multiple steps or actions            | Agent (with limits)  | High       | 5–20×         |
+| Combination of data + action         | Agent + RAG          | High       | 8–25×         |
+
+---
+
+## Compute Matrix
+
+| Scenario                             | Recommended pattern         | Note                           |
 |--------------------------------------|----------------------------|--------------------------------|
-| Começar rápido                       | Foundry / Gerenciado       | Menor operação                  |
-| Inference em escala com controle     | AKS + vLLM/SGLang          | Equilíbrio controle/operação    |
-| Training em larga escala             | CycleCloud / Slurm         | Jobs longos                    |
-| Alto volume + dados sensíveis        | Híbrido (Managed + Self)    | Router de decisão              |
+| Start fast                           | Foundry / Managed          | Less operations                |
+| Inference at scale with control      | AKS + vLLM/SGLang          | Control/operations balance     |
+| Large-scale training                 | CycleCloud / Slurm         | Long jobs                      |
+| High volume + sensitive data         | Hybrid (Managed + Self)    | Decision router                |
 
 ---
 
-## Matriz de Open Weights
+## Open Weights Matrix
 
-| Fator                        | Favorece Open Weights | Favorece API Fechada |
-|------------------------------|-----------------------|----------------------|
-| Data residency               | Sim                   | Não                  |
-| Volume muito alto            | Sim                   | Não                  |
-| Time-to-market               | Não                   | Sim                  |
-| Necessidade de fine-tuning   | Sim                   | Não                  |
-| Equipe pequena               | Não                   | Sim                  |
-
----
-
-## Checklist de Design de Inference
-
-- [ ] O modelo cabe na HBM disponível (com quantização)?
-- [ ] Prefill e Decode estão otimizados para o perfil de carga?
-- [ ] Continuous batching está habilitado?
-- [ ] Existe estratégia de autoscaling?
-- [ ] TTFT e throughput estão sendo medidos?
-- [ ] Custo por milhão de tokens está dentro do esperado?
+| Factor                       | Favors Open Weights | Favors Closed API |
+|------------------------------|---------------------|-------------------|
+| Data residency               | Yes                 | No                |
+| Very high volume             | Yes                 | No                |
+| Time-to-market               | No                  | Yes               |
+| Need for fine-tuning         | Yes                 | No                |
+| Small team                   | No                  | Yes               |
 
 ---
 
-## Checklist de Design de Agent
+## Inference Design Checklist
 
-- [ ] Existe limite máximo de steps?
-- [ ] As tools estão com o menor privilégio possível?
-- [ ] Ações críticas têm human-in-the-loop?
-- [ ] Custo por execução é observável?
-- [ ] Existe fallback para caminho simples?
-- [ ] Logs de steps e tool calls estão sendo coletados?
-
----
-
-## Checklist de Arquitetura Híbrida
-
-- [ ] O router tem critérios claros de decisão?
-- [ ] Cada caminho tem observabilidade própria?
-- [ ] Existe fallback?
-- [ ] A complexidade adicional se justifica?
-- [ ] A equipe consegue operar a solução?
+- [ ] Does the model fit in the available HBM (with quantization)?
+- [ ] Are Prefill and Decode optimized for the load profile?
+- [ ] Is continuous batching enabled?
+- [ ] Is there an autoscaling strategy?
+- [ ] Are TTFT and throughput being measured?
+- [ ] Is cost per million tokens within expectations?
 
 ---
 
-## Checklist de Segurança e Compliance
+## Agent Design Checklist
 
-- [ ] Dados sensíveis têm caminho definido (self-hosted ou isolado)?
-- [ ] Private Endpoints estão sendo usados onde faz sentido?
-- [ ] Agents têm auditoria de ações?
-- [ ] Políticas de Azure Policy cobrem GPU e regiões?
-- [ ] Classificação de dados influencia o roteamento?
-
----
-
-## Checklist de FinOps
-
-- [ ] Workloads de AI estão taggeados?
-- [ ] Existem alertas de custo?
-- [ ] Utilization de GPU está sendo monitorada?
-- [ ] Agents têm limite de custo ou steps?
-- [ ] Há revisão periódica de modelos (custo vs qualidade)?
+- [ ] Is there a maximum step limit?
+- [ ] Are tools at the least privilege possible?
+- [ ] Do critical actions have human-in-the-loop?
+- [ ] Is cost per execution observable?
+- [ ] Is there a fallback to a simple path?
+- [ ] Are logs of steps and tool calls being collected?
 
 ---
 
-## O que vem a seguir
+## Hybrid Architecture Checklist
 
-No Capítulo 17 (final) vamos ter o **Glossário Visual para Arquitetos**, consolidando os principais conceitos e diagramas do handbook.
+- [ ] Does the router have clear decision criteria?
+- [ ] Does each path have its own observability?
+- [ ] Is there a fallback?
+- [ ] Is the additional complexity justified?
+- [ ] Can the team operate the solution?
 
-Quer ajustes neste capítulo ou seguimos para o Capítulo 17?
+---
+
+## Security and Compliance Checklist
+
+- [ ] Do sensitive data have a defined path (self-hosted or isolated)?
+- [ ] Are Private Endpoints being used where it makes sense?
+- [ ] Do agents have action auditing?
+- [ ] Do Azure Policy policies cover GPU and regions?
+- [ ] Does data classification influence routing?
+
+---
+
+## FinOps Checklist
+
+- [ ] Are AI workloads tagged?
+- [ ] Are there cost alerts?
+- [ ] Is GPU utilization being monitored?
+- [ ] Do agents have a cost or step limit?
+- [ ] Is there periodic review of models (cost vs quality)?
+
+---
+
+## What comes next
+
+In Chapter 17 (final) we have the **Visual Glossary for Architects**, consolidating the main concepts and diagrams of the handbook.
