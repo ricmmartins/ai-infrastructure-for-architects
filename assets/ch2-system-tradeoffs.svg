@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 480" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Trade-offs de Sistema: Training vs Inference vs Agents</title>
+  <desc>Comparação dos principais trade-offs de system design entre os três modos de AI.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <text x="390" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Trade-offs de Sistema</text>
+
+  <!-- Columns headers -->
+  <rect x="40" y="55" width="220" height="40" rx="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="150" y="80" text-anchor="middle" font-weight="bold" font-size="13" fill="#1a3a5c">Training</text>
+
+  <rect x="280" y="55" width="220" height="40" rx="6" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"/>
+  <text x="390" y="80" text-anchor="middle" font-weight="bold" font-size="13" fill="#2d5a1b">Inference</text>
+
+  <rect x="520" y="55" width="220" height="40" rx="6" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5"/>
+  <text x="630" y="80" text-anchor="middle" font-weight="bold" font-size="13" fill="#5a3d6a">Agents</text>
+
+  <!-- Rows -->
+  <!-- Compute -->
+  <text x="20" y="125" font-size="11" font-weight="bold" fill="#333">Compute</text>
+  <rect x="40" y="105" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="150" y="130" text-anchor="middle" font-size="11" fill="#333">Multi-GPU, all-reduce</text>
+
+  <rect x="280" y="105" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="390" y="130" text-anchor="middle" font-size="11" fill="#333">Prefill + Decode</text>
+
+  <rect x="520" y="105" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="630" y="130" text-anchor="middle" font-size="11" fill="#333">Múltiplas chamadas</text>
+
+  <!-- Networking -->
+  <text x="20" y="185" font-size="11" font-weight="bold" fill="#333">Rede</text>
+  <rect x="40" y="165" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="150" y="190" text-anchor="middle" font-size="11" fill="#333">InfiniBand / NVLink</text>
+
+  <rect x="280" y="165" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="390" y="190" text-anchor="middle" font-size="11" fill="#333">Baixa latência</text>
+
+  <rect x="520" y="165" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="630" y="190" text-anchor="middle" font-size="11" fill="#333">Tools + APIs externas</text>
+
+  <!-- State -->
+  <text x="20" y="245" font-size="11" font-weight="bold" fill="#333">Estado</text>
+  <rect x="40" y="225" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="150" y="250" text-anchor="middle" font-size="11" fill="#333">Checkpoints</text>
+
+  <rect x="280" y="225" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="390" y="250" text-anchor="middle" font-size="11" fill="#333">KV Cache</text>
+
+  <rect x="520" y="225" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="630" y="250" text-anchor="middle" font-size="11" fill="#333">Memória + contexto</text>
+
+  <!-- Cost -->
+  <text x="20" y="305" font-size="11" font-weight="bold" fill="#333">Custo</text>
+  <rect x="40" y="285" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="150" y="310" text-anchor="middle" font-size="11" fill="#333">GPU-hours</text>
+
+  <rect x="280" y="285" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="390" y="310" text-anchor="middle" font-size="11" fill="#333">$/M tokens</text>
+
+  <rect x="520" y="285" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="630" y="310" text-anchor="middle" font-size="11" fill="#333">Tokens × steps</text>
+
+  <!-- Failure -->
+  <text x="20" y="365" font-size="11" font-weight="bold" fill="#333">Falha</text>
+  <rect x="40" y="345" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="150" y="370" text-anchor="middle" font-size="11" fill="#333">Checkpoint + resume</text>
+
+  <rect x="280" y="345" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="390" y="370" text-anchor="middle" font-size="11" fill="#333">Retry / fallback</text>
+
+  <rect x="520" y="345" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="630" y="370" text-anchor="middle" font-size="11" fill="#333">Orquestração + HITL</text>
+
+  <!-- Scale -->
+  <text x="20" y="425" font-size="11" font-weight="bold" fill="#333">Escala</text>
+  <rect x="40" y="405" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="150" y="430" text-anchor="middle" font-size="11" fill="#333">Scale-up + Scale-out</text>
+
+  <rect x="280" y="405" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="390" y="430" text-anchor="middle" font-size="11" fill="#333">Scale-out horizontal</text>
+
+  <rect x="520" y="405" width="220" height="40" rx="6" fill="#f8f9fa" stroke="#ccc"/>
+  <text x="630" y="430" text-anchor="middle" font-size="11" fill="#333">Orquestração</text>
+</svg>
