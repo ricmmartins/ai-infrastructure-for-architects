@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Camadas de Segurança em Sistemas de AI</title>
+  <desc>Principais camadas de segurança que o arquiteto deve considerar em workloads de AI.</desc>
+
+  <text x="360" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Camadas de Segurança</text>
+
+  <rect x="40" y="70" width="640" height="45" rx="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="360" y="98" text-anchor="middle" font-weight="bold" font-size="13" fill="#1a3a5c">Identidade e Acesso (quem pode chamar o quê)</text>
+
+  <rect x="60" y="130" width="600" height="45" rx="6" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="360" y="158" text-anchor="middle" font-weight="bold" font-size="13" fill="#2d5a1b">Rede e Isolamento (Private Endpoints, VNet)</text>
+
+  <rect x="80" y="190" width="560" height="45" rx="6" fill="#fff2cc" stroke="#d6b656" stroke-width="2"/>
+  <text x="360" y="218" text-anchor="middle" font-weight="bold" font-size="13" fill="#7a5900">Dados (encryption, residency, classificação)</text>
+
+  <rect x="100" y="250" width="520" height="45" rx="6" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="360" y="278" text-anchor="middle" font-weight="bold" font-size="13" fill="#5a3d6a">Aplicação / Agent (tools, side-effects, HITL)</text>
+</svg>
