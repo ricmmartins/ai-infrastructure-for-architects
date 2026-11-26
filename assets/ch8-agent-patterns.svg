@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="Segoe UI, Arial, sans-serif" role="img">
+  <title>Padrões de Agentes no Foundry</title>
+  <desc>Três padrões comuns de agentes que o arquiteto encontra no Microsoft Foundry.</desc>
+
+  <text x="360" y="35" text-anchor="middle" font-weight="bold" font-size="18" fill="#1a3a5c">Padrões de Agentes</text>
+
+  <rect x="30" y="70" width="200" height="180" rx="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="2"/>
+  <text x="130" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#1a3a5c">Single Agent</text>
+  <text x="130" y="140" text-anchor="middle" font-size="11" fill="#333">Um agent</text>
+  <text x="130" y="160" text-anchor="middle" font-size="11" fill="#333">Tools limitadas</text>
+  <text x="130" y="180" text-anchor="middle" font-size="11" fill="#333">Menor complexidade</text>
+  <text x="130" y="210" text-anchor="middle" font-size="11" fill="#555">Bom ponto de partida</text>
+
+  <rect x="260" y="70" width="200" height="180" rx="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="360" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#2d5a1b">Agent + Tools</text>
+  <text x="360" y="140" text-anchor="middle" font-size="11" fill="#333">Tools de negócio</text>
+  <text x="360" y="160" text-anchor="middle" font-size="11" fill="#333">RAG integrado</text>
+  <text x="360" y="180" text-anchor="middle" font-size="11" fill="#333">Controle de custo</text>
+  <text x="360" y="210" text-anchor="middle" font-size="11" fill="#555">Padrão mais comum</text>
+
+  <rect x="490" y="70" width="200" height="180" rx="10" fill="#e1d5e7" stroke="#9673a6" stroke-width="2"/>
+  <text x="590" y="105" text-anchor="middle" font-weight="bold" font-size="14" fill="#5a3d6a">Multi-Agent</text>
+  <text x="590" y="140" text-anchor="middle" font-size="11" fill="#333">Agents especializados</text>
+  <text x="590" y="160" text-anchor="middle" font-size="11" fill="#333">Orquestração</text>
+  <text x="590" y="180" text-anchor="middle" font-size="11" fill="#333">Maior custo</text>
+  <text x="590" y="210" text-anchor="middle" font-size="11" fill="#555">Casos complexos</text>
+</svg>
